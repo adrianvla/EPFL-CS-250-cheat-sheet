@@ -1,0 +1,78 @@
+\documentclass[a4paper,landscape]{article}
+
+% Compile with LuaLaTeX or XeLaTeX (fontspec does not work with pdfLaTeX).
+% With latexmk use:  latexmk -lualatex -pvc main.tex
+\usepackage[margin=0.15cm, top=0.2cm, bottom=0.2cm]{geometry}
+\usepackage{fontspec}
+\usepackage{multicol}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{enumitem}
+
+\setlength{\columnseprule}{0.2pt}
+\setlength{\columnsep}{0.25cm}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\setlist{nosep}
+
+% Font definitions -- install missing fonts to see them render
+\IfFontExistsTF{Libertinus Serif}{\newfontfamily\libertinus{Libertinus Serif}}{\newcommand\libertinus{\color{red}\bfseries[FONT NOT INSTALLED: Libertinus Serif]\color{black}\ }}
+\IfFontExistsTF{Charter}{\newfontfamily\charterfont{Charter}}{\newcommand\charterfont{\color{red}\bfseries[FONT NOT INSTALLED: Charter]\color{black}\ }}
+\IfFontExistsTF{Charter}{\newfontfamily\charterbold{Charter}}{\newcommand\charterbold{\color{red}\bfseries[FONT NOT INSTALLED: Charter]\color{black}\ }}
+\IfFontExistsTF{Charter Black}{\newfontfamily\charterblack{Charter Black}}{\newcommand\charterblack{\color{red}\bfseries[FONT NOT INSTALLED: Charter Black]\color{black}\ }}
+\IfFontExistsTF{TeX Gyre Termes}{\newfontfamily\newtxfont{TeX Gyre Termes}}{\newcommand\newtxfont{\color{red}\bfseries[FONT NOT INSTALLED: TeX Gyre Termes]\color{black}\ }}
+\IfFontExistsTF{TeX Gyre Pagella}{\newfontfamily\mathpazofont{TeX Gyre Pagella}}{\newcommand\mathpazofont{\color{red}\bfseries[FONT NOT INSTALLED: TeX Gyre Pagella]\color{black}\ }}
+\IfFontExistsTF{Helvetica}{\newfontfamily\helvetfont{Helvetica}}{\newcommand\helvetfont{\color{red}\bfseries[FONT NOT INSTALLED: Helvetica]\color{black}\ }}
+\IfFontExistsTF{Source Sans 3}{\newfontfamily\sourcesans{Source Sans 3}}{\newcommand\sourcesans{\color{red}\bfseries[FONT NOT INSTALLED: Source Sans 3]\color{black}\ }}
+\IfFontExistsTF{Inter}{\newfontfamily\interfont{Inter}}{\newcommand\interfont{\color{red}\bfseries[FONT NOT INSTALLED: Inter]\color{black}\ }}
+\IfFontExistsTF{JetBrains Mono}{\newfontfamily\jetbrainsmono{JetBrains Mono}}{\newcommand\jetbrainsmono{\color{red}\bfseries[FONT NOT INSTALLED: JetBrains Mono]\color{black}\ }}
+\IfFontExistsTF{Iosevka Custom}{\newfontfamily\iosevka{Iosevka Custom}}{\newcommand\iosevka{\color{red}\bfseries[FONT NOT INSTALLED: Iosevka Custom]\color{black}\ }}
+\IfFontExistsTF{IBM Plex Mono}{\newfontfamily\ibmplexmono{IBM Plex Mono}}{\newcommand\ibmplexmono{\color{red}\bfseries[FONT NOT INSTALLED: IBM Plex Mono]\color{black}\ }}
+
+% Tiny 6px-like rendering (4.5pt ~= 6px at 96dpi)
+\newcommand{\cheatsize}{\fontsize{4.5}{5.5}\selectfont}
+
+\newcommand{\testtext}{%
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. $E=mc^2$ \& $\int_0^1 x^2 dx = \frac{1}{3}$.
+}
+
+\newcommand{\fontsample}[2]{%
+  \cheatsize\textbf{#1:} #2\par\vspace{0.1cm}%
+}
+
+\begin{document}
+\cheatsize
+
+\begin{multicols}{4}
+
+\fontsample{Libertinus}{\libertinus \testtext \testtext}
+
+\fontsample{Charter Roman}{\charterfont \testtext \testtext}
+
+\fontsample{Charter Bold}{\charterbold \textbf{\testtext \testtext}}
+
+\fontsample{Charter Italic}{\charterfont \textit{\testtext \testtext}}
+
+\fontsample{Charter Black}{\charterblack \testtext \testtext}
+
+\fontsample{NewTX (TeX Gyre Termes)}{\newtxfont \testtext \testtext}
+
+\fontsample{MathPazo (TeX Gyre Pagella)}{\mathpazofont \testtext \testtext}
+
+\fontsample{Helvet (Helvetica)}{\helvetfont \testtext \testtext}
+
+\fontsample{Source Sans 3}{\sourcesans \testtext \testtext}
+
+\fontsample{Inter}{\interfont \testtext \testtext}
+
+\fontsample{JetBrains Mono}{\jetbrainsmono \testtext \testtext}
+
+\fontsample{Iosevka}{\iosevka \testtext \testtext}
+
+\fontsample{IBM Plex Mono}{\ibmplexmono \testtext \testtext}
+
+\vfill\null
+\end{multicols}
+
+\end{document}

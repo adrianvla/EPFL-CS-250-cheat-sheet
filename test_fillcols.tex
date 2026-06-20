@@ -1,0 +1,45 @@
+\documentclass{article}
+\usepackage[margin=1in,showframe]{geometry}
+\usepackage{multicol}
+\usepackage{xparse,xpatch}
+
+\makeatletter
+\newlength{\fillcol@height}
+\let\fill@columns\balance@columns
+\xpatchcmd{\fill@columns}{\vfuzz\z@
+  \setbox\count@\vbox to\dimen@}
+{\vfuzz\z@
+  \ifdim\fillcol@height>\z@ \else
+    \fillcol@height\@colroom
+  \fi
+  \setbox\count@\vbox to\fillcol@height}{}{}
+\NewDocumentEnvironment{fillcols}{m o}{
+  \IfValueT{#2}{\setlength{\fillcol@height}{#2}}
+  \renewcommand{\balance@columns}{\fill@columns}
+  \begin{multicols}{#1}
+  \addtolength{\baselineskip}{\fill}
+}{
+  \end{multicols}
+}
+\makeatother
+
+\setlength{\columnseprule}{1pt}
+\begin{document}
+\begin{fillcols}{4}
+Column 1 text.
+
+More text.
+\columnbreak
+Column 2 text.
+
+More text.
+\columnbreak
+Column 3 text.
+
+More text.
+\columnbreak
+Column 4 text.
+
+More text.
+\end{fillcols}
+\end{document}

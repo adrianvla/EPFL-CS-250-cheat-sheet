@@ -1,0 +1,21 @@
+\documentclass{article}
+\usepackage{fontspec}
+\usepackage{xcolor}
+\usepackage{listings}
+\newfontfamily\codefont{IBM Plex Mono}[Scale=0.9, Ligatures=TeXOff, Renderer=Basic]
+\definecolor{mygray}{HTML}{888888}
+\definecolor{textcol}{HTML}{000000}
+\begin{document}
+\tiny
+\lstset{
+  basicstyle=\codefont\color{textcol},
+  columns=fixed,
+  keepspaces=true,
+  breaklines=true,
+  literate={*}{{\textcolor{mygray}{*}}}1,
+}
+\begin{lstlisting}
+*map.entry(n)
+a + b
+\end{lstlisting}
+\end{document}

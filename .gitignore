@@ -1,0 +1,36 @@
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.lot
+*.lof
+*.idx
+*.ind
+*.ilg
+*.glo
+*.gls
+*.alg
+*.acr
+*.acn
+
+# PDF output (uncomment if you don't want to track generated PDFs)
+# *.pdf
+
+# Editor/IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Temporary files
+*.tmp
+*.bak
+*.backup
