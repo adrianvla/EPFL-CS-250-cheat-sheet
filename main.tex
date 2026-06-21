@@ -231,6 +231,7 @@
 \setlist[itemize]{nosep,topsep=0pt,parsep=0pt,partopsep=0pt,leftmargin=*,itemsep=0pt}
 
 \begin{multicols*}{4}
+\raggedcolumns
 \SetMCRule{line-style=solid, extend-fill}
 
 \sectiontitle{Complexity Table / Fast Lookup}
@@ -1242,30 +1243,41 @@ Runtime $\Theta(V+E)$.
 
 Forest of trees. parent$[x]$ points upward. Root is representative. rank$[x]$ upper-bounds height.
 
+\noindent
+\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
 \begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
-struct DSU {              // connectivity
-    parent: Vec<usize>,   // cycle detection
-    rank: Vec<usize>,
+struct DSU {
+  parent: Vec<usize>,
+  rank: Vec<usize>,
 }
-
 impl DSU{
-  fn new(n){DSU{parent:(0..n).collect(), rank:vec![0;n]}}
+  fn new(n){DSU{parent:(0..n).collect(),
+    rank:vec![0;n]}}
+
   fn find(&mut self,x){
-    if self.parent[x]!=x {self.parent[x]=self.find(self.parent[x])}
+    if self.parent[x]!=x {
+      self.parent[x]=self.find(self.parent[x])
+    }
     self.parent[x]
   }
+\end{lstlisting}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
+\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
   fn union(&mut self,x,y){
     let (mut rx,mut ry)=(self.find(x),self.find(y));
     if rx==ry {return false}
-    if self.rank[rx] < self.rank[ry] { swap(rx,ry) }
+    if self.rank[rx] < self.rank[ry]
+      { swap(rx,ry) }
     self.parent[ry]=rx;
     if self.rank[rx]==self.rank[ry] {
-        self.rank[rx]+=1;
+      self.rank[rx]+=1;
     }
     true
   }
 }
 \end{lstlisting}
+\end{minipage}
 
 Complexities:
 
@@ -1276,30 +1288,23 @@ Complexities:
 
 $\alpha(n)\le 5$ in practice.
 
-Use cases:
-
 \noindent
 \begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
-\textbf{Connected components:}
-
 \begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+//Connected components:
 let mut dsu: DSU = DSU::new(n);
-
 for (u, v) in edges {
     dsu.union(u, v);
 }
-
 if dsu.find(a) == dsu.find(b) {
     // same component
 }
 \end{lstlisting}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
-\textbf{Cycle detection (undirected):}
-
 \begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+//Cycle detection (undirected):
 let mut dsu: DSU = DSU::new(n);
-
 for (u, v) in edges {
     if !dsu.union(u, v) {
         // cycle
@@ -1456,40 +1461,26 @@ Runtime $O((V+E)\log V)$. Requires all weights $\ge0$; negative edges break it.
 % --- Bellman-Ford: two minipages, left = init+V-1 passes, right = negative-cycle check+return ---
 \subsectiontitle{Bellman-Ford}
 Input `edges: EdgeList`. Negative edges OK; detects reachable negative cycles.
-\noindent
-\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
 \begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
-fn bellman_ford(n:usize, edges:EdgeList, source:usize){
-  let mut dist=vec![INF;n];     // SSSP
-  let mut parent=vec![None;n];  // negative edges OK
-  dist[source]=0;         // detects reachable neg cycle
-
-  for _ in 0..n-1 {
-    let mut changed=false;
-    for edge in edges {
-      if dist[edge.u]!=INF 
-          && dist[edge.v]>dist[edge.u]+edge.w {
-        dist[edge.v]=dist[edge.u]+edge.w;
-        parent[edge.v]=Some(edge.u);
+fn bellman_ford(n, edges, source){
+  dist=vec![INF;n]; parent=vec![None;n]; dist[source]=0;
+  for _ in 0..n-1 { changed=false;
+    for e in edges {
+      if dist[e.u]!=INF && dist[e.v]>dist[e.u]+e.w {
+        dist[e.v]=dist[e.u]+e.w; parent[e.v]=Some(e.u);
         changed=true;
       }
     }
     if !changed {break}
   }
-\end{lstlisting}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
-  for edge in edges {
-    if dist[edge.u]!=INF 
-        && dist[edge.v]>dist[edge.u]+edge.w {
-      return None;
+  for e in edges {
+    if dist[e.u]!=INF && dist[e.v]>dist[e.u]+e.w {
+      return None; // reachable negative cycle
     }
   }
   Some(dist)
 }
 \end{lstlisting}
-\end{minipage}
 Runtime $\Theta(VE)$. Returns `None` iff a reachable negative cycle is detected.
 \textbf{Negative cycle not reachable from source:}
 Bellman-Ford still returns shortest paths.
@@ -1637,6 +1628,28 @@ Online: decide before future known. Competitive ratio:
 \]
 Ski rental: rent 1/day, buy $B$, unknown $T$. $\text{OPT}(T)=\min(T,B)$. Rent until cost $B$, then buy. Ratio $2$.
 
+\subsectiontitle{Experts / Weighted Majority}
+$n$ experts, rounds $t=1..T$. Expert $i$ predicts; loss $\ell_{i,t}\in\{0,1\}$.
+Weights $w_i=1$ initially. Let $W=\sum_iw_i$.
+
+\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+for t in 1..=T {
+  predict weighted majority of experts;
+  observe true outcome;
+  for expert i wrong this round {
+    w[i] *= beta;        // 0 < beta < 1, often beta=1/2
+  }
+}
+\end{lstlisting}
+
+Weighted prediction: choose label with larger total weight.\
+Potential: $W_t=\sum_i w_i^{(t)}$.
+If ALG makes mistake, wrong-weight $\ge W_t/2$, so
+$W_{t+1}\le W_t/2\cdot\beta+W_t/2=W_t(1+\beta)/2$.
+If best expert has $m^*$ mistakes, its weight is $\beta^{m^*}$, hence
+$\beta^{m^*}\le W_T\le n\big((1+\beta)/2\big)^M$.
+For $\beta=1/2$: $M\le 2.41(m^*+\log_2 n)$.
+General randomized Hedge: choose expert with prob $w_i/W$; update $w_i\leftarrow w_i e^{-\eta \ell_{i,t}}$; regret $O(\sqrt{T\log n})$.
 Secretary: random order; skip first $n/e$, take next candidate better than all seen; success probability $\sim1/e$. Prophet: online threshold vs prophet seeing all values.
 
 \end{multicols*}
