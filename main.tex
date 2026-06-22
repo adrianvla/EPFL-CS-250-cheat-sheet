@@ -251,7 +251,7 @@
 \setlength{\belowdisplayshortskip}{0pt}
 \setlist[itemize]{nosep,topsep=0pt,parsep=0pt,partopsep=0pt,leftmargin=*,itemsep=0pt}
 
-\begin{multicols*}{4}
+\begin{multicols*}{5}
 \flushcolumns
 \SetMCRule{line-style=solid, extend-fill}
 
@@ -932,26 +932,37 @@ Runtime $\Theta(n^3)$, space $\Theta(n^2)$.
 
 \subsectiontitle{Longest Common Subsequence}
 $dp[i][j]=$ LCS length of $A[0..i),B[0..j)$.
-LCS: dp[0][*]=dp[*][0]=0. If A[i-1]==B[j-1]: dp[i][j]=1+dp[i-1][j-1]; else max(up,left).
+LCS: dp[0][*]=dp[*][0]=0. If A[i-1]==B[j-1]: dp[i][j]=1+dp[i-1][j-1]; else max(up,left).\\
+\noindent
+\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
 \begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn lcs(a:Vec<char>, b:Vec<char>){
-  n=a.len(); m=b.len(); dp=vec![vec![0;m+1];n+1];
+  n=a.len(); m=b.len();
+  dp=vec![vec![0;m+1];n+1];
   for i in 1..=n {for j in 1..=m {
-    dp[i][j]=if a[i-1]==b[j-1] {1+dp[i-1][j-1]}
-             else {dp[i-1][j].max(dp[i][j-1])}
+    dp[i][j]=if a[i-1]==b[j-1]
+      {1+dp[i-1][j-1]}
+      else {dp[i-1][j].max(dp[i][j-1])}
   }}
   dp[n][m]
 }
-fn lcs_reconstruct(a:Vec<char>, b:Vec<char>, dp:Vec<Vec<usize>>){
+\end{lstlisting}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
+fn lcs_reconstruct(a,b,dp){
   i=a.len(); j=b.len(); ans=vec![];
   while i>0 && j>0 {
-    if a[i-1]==b[j-1] {ans.push(a[i-1]); i-=1; j-=1}
+    if a[i-1]==b[j-1] {
+      ans.push(a[i-1]); i-=1; j-=1
+    }
     else if dp[i-1][j]>=dp[i][j-1] {i-=1}
     else {j-=1}
   }
   ans.reverse(); ans
 }
 \end{lstlisting}
+\end{minipage}
 $\Theta(nm)$ time, $\Theta(nm)$ or rolling $\Theta(m)$ space. Equal $\to$ diagonal+1; unequal $\to$ max(up,left).
 
 \subsectiontitle{Knapsack 0/1}
@@ -989,7 +1000,9 @@ Runtime $\Theta(target\cdot \#coins)$.
 
 \subsectiontitle{Longest Increasing Subsequence}
 Quadratic:
-LIS $O(n^2)$: $dp[i]=1+\max\{dp[j]:j<i, a[j]<a[i]\}$; answer=$\max dp$.
+LIS $O(n^2)$: $dp[i]=1+\max\{dp[j]:j<i, a[j]<a[i]\}$; answer=$\max dp$.\\
+\noindent
+\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
 \begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn lis_n2(a:Vec<i32>){
   dp=vec![1;a.len()];
@@ -998,16 +1011,23 @@ fn lis_n2(a:Vec<i32>){
   }}
   max(dp)
 }
-fn lis_nlogn(a:Vec<i32>){ // tails[len-1] = min tail
-  tails=vec![];
+\end{lstlisting}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
+fn lis_nlogn(a:Vec<i32>){
+  tails=vec![]; // min tail of length len
   for x in a {
     l=0; r=tails.len();
-    while l<r {m=(l+r)/2; if tails[m]<x {l=m+1}else{r=m}}
-    if l==tails.len(){tails.push(x)}else{tails[l]=x}
+    while l<r {m=(l+r)/2;
+      if tails[m]<x {l=m+1}else{r=m}}
+    if l==tails.len(){tails.push(x)}
+    else{tails[l]=x}
   }
   tails.len()
 }
 \end{lstlisting}
+\end{minipage}
 
 \subsectiontitle{DAG Longest Path}
 Input `adj: WGraph`. Topological order; max-relaxation; negative weights OK because no cycles.
@@ -1276,13 +1296,7 @@ Cut $(S,V-S)$: edge crosses cut iff one endpoint in $S$, one outside. Light edge
 Data structures:
 
 \begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
-
-struct Edge {
-    u,
-    v,
-    w: i32,
-}
-
+struct Edge {u,v,w: i32,}
 let mut edges: Vec<Edge> = ...;
 let mut dsu: DSU = DSU::new(n);
 let mut mst: Vec<Edge> = Vec::new();
@@ -1370,24 +1384,27 @@ negative edges & Bellman-Ford
 \subsectiontitle{Relaxation}
 Relax edge (u,v,w): if dist[u]!=INF and dist[v] > dist[u]+w, set dist[v]=dist[u]+w and parent[v]=u.
 
+%\subsectiontitle{Dijkstra}
 \subsectiontitle{Dijkstra}
+\noindent
+\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
 \begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
-fn dijkstra(adj:WGraph, source:usize){ // all weights >= 0
-  let n=adj.len();
-  let mut dist=vec![INF;n];
-  let mut parent=vec![None;n];
-  let mut heap=MinHeap::<(i32,usize)>::new();
-
+fn dijkstra(adj:WGraph, source:usize){
+  // all weights >= 0
+  n=adj.len(); dist=vec![INF;n];
+  parent=vec![None;n];
+  heap=MinHeap::<(i32,usize)>::new();
   dist[source]=0;
   heap.push((0,source));
-
+\end{lstlisting}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
   while let Some((du,u))=heap.pop(){
-    if du!=dist[u] {continue} // stale heap entry
-
+    if du!=dist[u] {continue} // stale
     for (v,w) in adj[u] {
       if dist[v]>du+w {
-        dist[v]=du+w;
-        parent[v]=Some(u);
+        dist[v]=du+w; parent[v]=Some(u);
         heap.push((dist[v],v));
       }
     }
@@ -1395,30 +1412,43 @@ fn dijkstra(adj:WGraph, source:usize){ // all weights >= 0
   dist
 }
 \end{lstlisting}
+\end{minipage}
 Runtime $O((V+E)\log V)$. Requires all weights $\ge0$; negative edges break it.
 % --- Bellman-Ford: two minipages, left = init+V-1 passes, right = negative-cycle check+return ---
+%\subsectiontitle{Bellman-Ford}
 \subsectiontitle{Bellman-Ford}
 Input `edges: EdgeList`. Negative edges OK; detects reachable negative cycles.
+\noindent
+\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
 \begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
-fn bellman_ford(n, edges, source){
-  dist=vec![INF;n]; parent=vec![None;n]; dist[source]=0;
+fn bellman_ford(n,edges,source){
+  dist=vec![INF;n]; parent=vec![None;n];
+  dist[source]=0;
   for _ in 0..n-1 { changed=false;
     for e in edges {
-      if dist[e.u]!=INF && dist[e.v]>dist[e.u]+e.w {
-        dist[e.v]=dist[e.u]+e.w; parent[e.v]=Some(e.u);
+      if dist[e.u]!=INF &&
+         dist[e.v]>dist[e.u]+e.w {
+        dist[e.v]=dist[e.u]+e.w;
+        parent[e.v]=Some(e.u);
         changed=true;
       }
     }
     if !changed {break}
   }
+\end{lstlisting}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
   for e in edges {
-    if dist[e.u]!=INF && dist[e.v]>dist[e.u]+e.w {
-      return None; // reachable negative cycle
+    if dist[e.u]!=INF &&
+       dist[e.v]>dist[e.u]+e.w {
+      return None; // reachable neg cycle
     }
   }
   Some(dist)
 }
 \end{lstlisting}
+\end{minipage}
 Runtime $\Theta(VE)$. Returns `None` iff a reachable negative cycle is detected.
 \textbf{Negative cycle not reachable from source:}
 Bellman-Ford still returns shortest paths.
