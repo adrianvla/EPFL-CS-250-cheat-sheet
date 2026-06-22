@@ -3,7 +3,7 @@
 % Compile with LuaLaTeX or XeLaTeX (fontspec does not work with pdfLaTeX).
 % With latexmk use:  latexmk -lualatex -pvc main.tex
 
-\usepackage[margin=0.09cm, top=0.10cm, bottom=0.10cm]{geometry}
+\usepackage[margin=0.055cm, top=0.065cm, bottom=0.065cm]{geometry}
 \usepackage{fontspec}
 \usepackage{multicol}
 \usepackage{multicolrule}
@@ -18,7 +18,7 @@
 \tcbuselibrary{raster,listings,skins,breakable}
 
 \setlength{\columnseprule}{0.4pt}
-\setlength{\columnsep}{0.16cm}
+\setlength{\columnsep}{0.105cm}
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0pt}
@@ -75,7 +75,7 @@
 
 \lstset{
   language=RustIsland,
-  basicstyle=\codefont\color{rustText}\fontsize{2.88}{2.98}\selectfont,
+  basicstyle=\codefont\color{rustText}\fontsize{2.78}{2.86}\selectfont,
   keywordstyle=\color{rustKeyword},
   commentstyle=\color{rustComment}\itshape,
   stringstyle=\color{rustString},
@@ -88,7 +88,7 @@
   tabsize=2,
   columns=fullflexible,
   keepspaces=true,
-  lineskip=-0.40pt,
+  lineskip=-0.47pt,
   xleftmargin=0pt,
   framexleftmargin=0pt,  
   aboveskip=0pt,
@@ -100,7 +100,7 @@
 % Token classes (listings can't auto-detect everything, so we tag common names)
 \lstset{
   % functions / methods
-  emph={top_k_frequent, new, entry, or_default, values, max, copied, rev, get, extend, iter, push, len, cloned, as_ref, map, unwrap_or, range, sum, collect, println, print, eprintln, format, panic, assert, dbg, Self, is_none, is_some, unwrap, min, sort_by, cmp, swap, fill, reverse, push_back, pop_front, pop},
+  emph={top_k_frequent, new, entry, or_default, values, max, copied, rev, get, extend, iter, push, len, cloned, as_ref, map, unwrap_or, range, sum, collect, println, print, eprintln, format, panic, assert, dbg, Self, is_none, is_some, unwrap, min, sort_by, cmp, swap, fill, reverse, push\_back, pop_front, pop},
   emphstyle=\color{rustFunction},
   % macros / attributes
   emph={[2]vec, derive, test, cfg, allow, warn, deny, macro_rules, inline, must_use},
@@ -235,11 +235,16 @@
 \newcommand{\maint}{\wk{Maint:} }
 \newcommand{\term}{\wk{Term:} }
 
+\newcommand{\microq}[2]{%
+  \par\vspace{0pt}%
+  \noindent{\color{rustKeyword}\bfseries #1:}\hspace{0.04cm}#2\par%
+}
+
 
 \begin{document}
 \cheatsize
 \bodyfont
-\linespread{0.70}\selectfont
+\linespread{0.68}\selectfont
 \setlength{\tabcolsep}{1.0pt}
 \renewcommand{\arraystretch}{0.70}
 \setlength{\fboxsep}{0pt}
@@ -346,7 +351,7 @@ Coin change & $\Theta(W\cdot \#\text{coins})$ & $\Theta(W)$ & unbounded \\
 
 \proofitem{Heapify}{Children are heaps. Swap with larger child if violated; parent fixed. Only swapped child may violate; recurse to leaf. Cost height $O(\log n)$.}
 
-\proofitem{BuildHeap}{Leaves are heaps. Bottom-up: children already heaps, so Heapify fixes subtree. Runtime: nodes height $h\le n/2^{h+1}$, total $\sum_h O(h)n/2^h=O(n)$.}
+\proofitem{BuildHeap}{Leaves are heaps. Bottom-up: children already heaps, so Heapify fixes subtree. Runtime: nodes height $h\le n/2^{h+1}$, total $\sum_h O(h)n/2\textasciicircum h=O(n)$.}
 
 \proofitem{Sorting lower bound}{Comparison sort decision tree needs $\ge n!$ leaves. Worst-case comparisons $\ge$ height $\ge\log_2(n!)=\Omega(n\log n)$.}
 
@@ -416,6 +421,63 @@ flow and cut are both optimal.}
 \proofbanktitle{Proof Bank: Online / Random}
 
 \proofitem{LRU paging}{Cache size $k$. Phase has $\le k$ distinct pages; new phase begins at request of $(k+1)$-st distinct. LRU: $\le k$ misses/phase, because requested page survives until $k$ other distinct pages requested. OPT: $\ge1$ miss/completed phase, because phase + first request of next phase contains $k+1$ distinct pages but cache holds $k$. Thus LRU $\le k\cdot$OPT$+O(k)$; LRU is $k$-competitive.}
+
+
+\subsectiontitle{Verbose Proof Micro-Stencils}
+{
+\microq{Correctness opening}{Start with a precise claim: after the algorithm terminates, the returned object is feasible and has objective value no worse than any feasible object. Then prove feasibility and optimality separately.}
+\microq{Induction base habit}{Say exactly which subproblems are smallest and why their table/return value is correct. Do not write ``trivial'' unless the value is actually shown, e.g. dp[0]=0 or empty subtree height=-1.}
+\microq{Induction step habit}{Assume all strict subproblems used by the transition are correct. Show every transition candidate is feasible, and the optimum's first/last choice appears among the candidates.}
+\microq{Exchange proof form}{Let O be an optimum agreeing with greedy for as long as possible. If greedy choice g differs from O's next choice o, replace o by g; prove feasibility remains and weight/count is not worse. Contradiction to maximal agreement.}
+\microq{Greedy lower-bound proof}{To prove greedy is optimal, also prove a matching lower bound: any solution needs at least X objects/cost. Then show greedy achieves X. Common in interval partitioning and stabbing.}
+\microq{Cut proof exactness}{For MST safe edge proofs, the cut must respect already chosen edges A: no edge in A crosses it. Then swapping along the cycle cannot remove an edge of A.}
+\microq{Cycle proof exactness}{For MST cycle proofs, removing the heavy edge disconnects T into a cut. The replacement edge on the cycle crosses the same cut, reconnects T, and has smaller/equal weight.}
+\microq{Reduction correctness}{Prove both directions: any original solution maps to a feasible constructed solution of same value, and any constructed solution maps back to a valid original solution of same value. Then optimum values equal.}
+\microq{Flow reduction proof}{Integral capacities imply an integral max flow. Unit flow through a gadget means the corresponding discrete choice is selected; capacity constraints exactly encode usage limits.}
+\microq{Matching proof}{Flow->matching: cap 1 on s->L and R->t gives at most one matched edge per vertex. Matching->flow: send one unit along s-l-r-t for each matched pair.}
+\microq{Min-cut certificate}{After max-flow, BFS in residual graph from s gives S. Edges S->T are saturated and T->S carry zero flow, so value crossing cut equals cut capacity.}
+\microq{Shortest path reduction}{When adding state dimensions, prove bijection-ish: every feasible original walk corresponds to a path in the state graph, and every state path decodes to a feasible walk.}
+\microq{Dijkstra finality}{The key sentence: when x is extracted, any alternative path to x must first leave the finalized set by some edge (u,v); nonnegative weights make that path at least dist[v] >= dist[x].}
+\microq{Bellman-Ford invariant}{After i full passes, dist[v] is at most the length of the shortest s->v path using at most i edges, and no smaller value than any such path is needed. Last-edge relaxation proves it.}
+\microq{Negative-cycle proof}{If pass V still relaxes an edge reachable from s, the improving walk has V edges, so some vertex repeats; the repeated cycle must have negative total weight.}
+\microq{BFS shortest proof}{Use contradiction: let v be first vertex discovered with nonshortest distance. Its predecessor on a shortest path has smaller distance and was processed earlier, so it would have discovered v correctly.}
+\microq{DFS cycle proof}{Directed cycle -> during DFS, take the first vertex on the cycle discovered; following the cycle reaches a gray ancestor edge before it finishes. Gray edge -> ancestor path plus edge forms a cycle.}
+\microq{Topo proof}{In a DAG DFS has no back edge. For every edge u->v, v finishes before u whether discovered from u or already black. Therefore decreasing finish time respects every edge.}
+\microq{SCC proof}{Condensation is a DAG. The second DFS in reverse graph starts from a source of remaining reverse condensation, equivalently a sink/source by finish order, so it cannot escape its SCC.}
+\microq{Binary search invariant}{Maintain answer in [l,r]. Mid test discards only values impossible by monotonicity. Termination l=r gives the unique smallest feasible or largest feasible depending on direction.}
+\microq{Feasibility proof}{For parametric search, prove feasible(M) is exact, not just sufficient. Usually: greedy uses the minimum possible resources for this M, so if greedy fails no valid solution exists.}
+\microq{Divide-farm proof}{For fixed M, greedy makes each segment as long as possible. After t segments greedy covers at least as much prefix as any t-segment valid partition; hence greedy minimizes number of segments.}
+\microq{Interval scheduling proof}{Let g be earliest finishing interval. For any optimum, replace its first interval by g. Since g finishes no later, all later intervals remain compatible; size unchanged. Induct on suffix.}
+\microq{Weighted interval DP proof}{Optimal solution for first i intervals either skips i or takes i. If it takes i, all remaining chosen intervals lie among first p(i). These two cases are exhaustive and disjoint.}
+\microq{Travel-pass DP proof}{In an optimum covering first uncovered day d[i], the bought pass has one of the allowed lengths L and covers exactly until d[i]+L-1. The remaining subproblem starts at next(i,L).}
+\microq{Knapsack proof}{For item i, optimum either excludes it, giving dp[i-1][w], or includes it, forcing capacity w-weight[i] for previous items. No third possibility exists.}
+\microq{LCS proof}{For prefixes i,j: if last chars match, some optimum can use them and reduce to i-1,j-1. If they differ, at least one last char is not used, giving max of the two smaller prefixes.}
+\microq{Matrix-chain proof}{The final multiplication splits the product at some k. Costs before that split are independent subchains, so optimality follows by trying every k and using optimal subsolutions.}
+\microq{Rod-cutting proof}{Look at the leftmost piece length i in an optimal cutting. The remainder length n-i must itself be cut optimally, else replace it and improve total revenue.}
+\microq{Optimal BST proof}{Choosing root r increases depth of every key in left/right subtrees by 1, adding total interval probability w[i,j]. Subtrees are independent optimal BST subproblems.}
+\microq{Tree DP proof}{Any optimal object in subtree u either lies completely in one child subtree or uses u / crosses between children. The recurrence takes the max over exactly these cases.}
+\microq{Tree reconstruction proof}{Root position in inorder uniquely separates left and right key sets. Subtree sizes then uniquely split preorder/postorder blocks, so recursion reconstructs the only tree.}
+\microq{Heapify proof}{Before heapify, both child subtrees are heaps. Swapping with the larger child fixes the parent; the only possible violation moves down one level. Eventually a leaf is reached.}
+\microq{Build-heap proof}{Process internal nodes from bottom to top. When heapify(i) runs, both children already root heaps, so it makes subtree i a heap. At the root the whole array is a heap.}
+\microq{Insertion sort proof}{Before iteration j, prefix A[0..j) is sorted and contains the original prefix elements. Inner loop shifts larger elements right; inserting key restores sorted prefix A[0..j+1).}
+\microq{Merge proof}{Loop invariant: output contains the smallest consumed elements from both sorted halves, in sorted order. Taking the smaller head preserves sortedness; copying leftovers completes all elements.}
+\microq{Quicksort proof}{Partition puts pivot in final rank: all left <= pivot, all right > pivot. Recursive calls sort the two sides; concatenating left,pivot,right is sorted and complete.}
+\microq{Counting-sort proof}{Prefix count C[x] equals number of input keys <=x. Scanning input right-to-left places each key at the last free position of its value, giving sorted stable output.}
+\microq{Hash expectation proof}{Define one indicator per bad pair/event. Compute probability for a fixed pair, then sum expectations. Independence between different pairs is not needed for the expectation.}
+\microq{Quicksort expectation proof}{Elements of ranks i,j are compared iff the first pivot chosen among ranks i..j is one of them. That probability is 2/(j-i+1); summing pairs gives O(n log n).}
+\microq{Lower-bound proof}{For comparison sorting, leaves of decision tree must distinguish all n! input orders. A binary tree of height h has at most 2\textasciicircum h leaves, so h>=log(n!).}
+\microq{Online upper proof}{Partition the request sequence into phases. Prove ALG cost per phase <=A and OPT cost per phase >=B, then sum phases and absorb boundary phases into constant c.}
+\microq{Online lower proof}{Adversary observes the deterministic algorithm's action and chooses when to stop/continue. Compare on the same final sequence against offline OPT.}
+\microq{Ski-rental proof}{If T<=B, rent-then-buy pays T=OPT. If T>B, it pays at most B rent plus B buy, while OPT pays B; ratio <=2.}
+\microq{LRU phase proof}{In one phase there are at most k distinct pages, so after a page is requested, LRU will not evict it before k other distinct pages appear, which would start a new phase.}
+\microq{Experts potential proof}{Track total weight W. Algorithm mistake means wrong side has at least half W, so W shrinks by factor <=(1+beta)/2. Best expert gives lower bound beta\textasciicircum m*.}
+\microq{Prophet threshold proof}{Separate value into threshold part tau*P[accept] and overshoot part. If all earlier variables miss threshold, each positive overshoot has chance to be captured; combine with tau=z/2.}
+\microq{Secretary proof}{Condition on best arriving at position i>r. Success iff best among first i-1 positions is in sample. Probability sum over i: (1/n)*(r/(i-1)).}
+\microq{Runtime proof}{Count objects actually processed: each vertex enqueued once, each edge scanned once, each DP state filled once, each heap operation O(log size). State dimensions after reductions.}
+\microq{Off-by-one proof}{State intervals explicitly. Half-open [l,r) usually makes size r-l, empty when l=r, and split [l,m),[m,r). Closed [i,j] needs base i>j or i=j.}
+\microq{Final answer habit}{After proof, write the exact returned value: dp[n], dp[1], dist[t], maxflow value, selected edges, or reconstructed choices. Missing this often loses points.}
+}
+
 \sectiontitle{Complexity / Asymptotics}
 
 $\log n \ll \sqrt n \ll n \ll n\log n \ll n^2 \ll n^3 \ll 2^n \ll n! \ll n^n$
@@ -461,24 +523,24 @@ $p<k$ & root/work wins & $\Theta(n^k)$\\
 use $cn^p - d n^q$.
 \textbf{Akra--Bazzi mini:} $T(n)=\alpha T(an)+\beta T(bn)+\Theta(n^d)$. Find $p$: $\alpha a^p+\beta b^p=1$. Then $p>d\Rightarrow\Theta(n^p)$, $p=d\Rightarrow\Theta(n^d\log n)$, $p<d\Rightarrow\Theta(n^d)$.
 \textbf{Recurrences / runtimes:}
-{\codefont\fontsize{3.15}{3.25}\selectfont
-\begin{tabular}{@{}lll@{}}
-binsearch & $T=T(n/2)+1$ & $\Theta(\log n)$\\
-merge/maxsub & $T=2T(n/2)+n$ & $\Theta(n \log n)$\\
-naive mm & $T=8T(n/2)+n^2$ & $\Theta(n^3)$\\
-strassen & $T=7T(n/2)+n^2$ & $\Theta(n^{\log_2 7})$\\
-heapify & $T\le T(2n/3)+1$ & $O(\log n)$\\
-qsort worst & $T=T(n-1)+n$ & $\Theta(n^2)$\\
-qsort bal & $T=2T(n/2)+n$ & $\Theta(n \log n)$\\
-BF & $(V-1)E$ relax & $\Theta(V\cdot E)$\\
-BFS/DFS & visit $V$, scan $E$ & $\Theta(V+E)$
-\end{tabular}}
-\begin{tabular}{@{}ll@{}}
-$T(n/2)+1 \to \log n$ & $T(n/2)+n \to n$\\
-$2T(n/2)+1 \to n$ & $2T(n/2)+n \to n \log n$\\
-$3T(n/2)+n \to n^{\log_2 3}$ & $7T(n/2)+n^2 \to$ Strassen\\
-$8T(n/2)+n^2 \to n^3$ & $T(n-1)+n \to n^2$
-\end{tabular}
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
+BinSearch: T(n/2)+1 -> log n
+Merge/MaxSub: 2T(n/2)+n -> n log n
+Naive MM: 8T(n/2)+n^2 -> n^3
+Strassen: 7T(n/2)+n^2 -> n^log2(7)
+Heapify: T(2n/3)+1 -> log n
+QSort(w): T(n-1)+n -> n^2
+QSort(b): 2T(n/2)+n -> n log n
+BF: (V-1)E relax -> VE
+BFS/DFS: V+E
+
+T(n/2)+1->log n    T(n/2)+n->n
+2T(n/2)+1->n       2T(n/2)+n->n log n
+3T(n/2)+n->n^log2(3)
+7T(n/2)+n^2->Strassen
+8T(n/2)+n^2->n^3
+T(n-1)+n->n^2
+\end{lstlisting}
 
 \sectiontitle{Basic Data Structures}
 \subsectiontitle{Stack / Queue / Linked List}
@@ -715,7 +777,7 @@ fn build_max_heap(a:&mut Vec<i32>){
   for i in (0..(n/2)).rev(){ max_heapify(a,i,n); }
 }
 \end{lstlisting}
-Tight: nodes height $h\le n/2^{h+1}$, cost $O(h)$, so $\sum_h nh/2^h=O(n)$; hence BuildHeap $\Theta(n)$, not $\Theta(n\log n)$.
+Tight: nodes height $h\le n/2^{h+1}$, cost $O(h)$, so $\sum_h nh/2\textasciicircum h=O(n)$; hence BuildHeap $\Theta(n)$, not $\Theta(n\log n)$.
 
 \subsectiontitle{Heapsort}
 \begin{lstlisting}
@@ -821,22 +883,23 @@ Complexity: T(n)=2T(n/2)+Theta(n)=Theta(nlog n)
 
 Linear Kadane:
 
+\begin{minipage}[t]{0.32\linewidth}\vspace{0pt}
 \begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
-
 fn kadane(a: &Vec<i32>) -> i32 {
     let mut best: i32 = a[0];
     let mut cur: i32 = a[0];
-
     for i in 1..a.len() {
+\end{lstlisting}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.52\linewidth}\vspace{0pt}
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
         cur = a[i].max(cur + a[i]);
         best = best.max(cur);
     }
-
     best
 }
-
 \end{lstlisting}
-
+\end{minipage}\\
 Kadane invariant:
 cur[i] = max(A[i], cur[i-1]+A[i]), best[i]=max(best[i-1],cur[i])
 
@@ -1062,14 +1125,14 @@ fn bfs(adj:Graph, source:usize){
   parent=vec![None;n];// levels, components
   queue=VecDeque::new();
   dist[source]=0;
-  queue.push_back(source);
+  queue.push\_back(source);
 
   while let Some(u)=queue.pop_front(){
     for v in adj[u] {
       if dist[v]==INF {
         dist[v]=dist[u]+1;
         parent[v]=Some(u);
-        queue.push_back(v);
+        queue.push\_back(v);
       }
     }
   }
@@ -1084,12 +1147,12 @@ fn bipartite(adj:Graph){ // 2-coloring
   queue=VecDeque::new();
   for s in 0..n {  // false iff odd cycle
     if color[s]!=-1 {continue} 
-    color[s]=0; queue.push_back(s);
+    color[s]=0; queue.push\_back(s);
     while let Some(u)=queue.pop_front(){
       for v in adj[u] {
         if color[v]==-1 {
           color[v]=1-color[u];
-          queue.push_back(v);
+          queue.push\_back(v);
         }
         else if color[v]==color[u] {ret false}
       }
@@ -1148,12 +1211,12 @@ fn topo_kahn(adj:Graph){
 \begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
   for u in 0..n {for v in adj[u]{indeg[v]+=1}}
   for u in 0..n {if indeg[u]==0 {
-    queue.push_back(u)}}
+    queue.push\_back(u)}}
   while let Some(u)=queue.pop_front(){
     order.push(u);
     for v in adj[u]{
       indeg[v]-=1;
-      if indeg[v]==0{queue.push_back(v)}
+      if indeg[v]==0{queue.push\_back(v)}
     }
   }//Kahn returns `None` iff 
   if order.len()==n {Some(order)} else {None}
@@ -1321,18 +1384,21 @@ Traps:
 
 \subsectiontitle{Prim}
 
+\begin{minipage}[t]{0.32\linewidth}\vspace{0pt}
 \begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
-let mut adj: Vec<Vec<(usize, i32)>> = vec![Vec::new(); n];
+let mut adj: Vec<Vec<(usize, i32)>> 
+    = vec![Vec::new(); n];
 let mut used: Vec<bool> = vec![false; n];
-let mut heap: BinaryHeap<Reverse<(i32, usize, usize)>> = BinaryHeap::new();
-// (weight, vertex, parent)
-
-\end{lstlisting}
-
-\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
-fn prim(adj,s){                         // MST
-  heap.push((0,s)); total=0; cnt=0;     // min crossing edge
+let mut heap: BinaryHeap<Reverse<(i32, 
+    usize, usize)>> = BinaryHeap::new();
+// (weight, vertex, parent)         // MST
+fn prim(adj,s){         // min crossing edge
+  heap.push((0,s)); total=0; cnt=0;
   while let Some((w,u))=heap.pop_min(){
+\end{lstlisting}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.52\linewidth}\vspace{0pt}
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
     if used[u] {continue}
     used[u]=true; total+=w; cnt+=1;
     for (v,w2) in adj[u] {
@@ -1343,6 +1409,7 @@ fn prim(adj,s){                         // MST
   total
 }
 \end{lstlisting}
+\end{minipage}
 
 Complexity:
 
@@ -1490,14 +1557,14 @@ adj[u].push(v);adj[v].push(u);cap[u][v]+=c
 }
 fn bfs_path(source:usize, sink:usize){
   parent.fill(None); parent[source]=Some(source);
-  queue.push_back((source,INF));
+  queue.push\_back((source,INF));
   while let Some((u,flow))=queue.pop_front(){
     for v in adj[u]{
       if parent[v].is_none() && cap[u][v]>0 {
         parent[v]=Some(u);
         pushed=flow.min(cap[u][v]);
         if v==sink {return pushed}
-        queue.push_back((v,pushed))
+        queue.push\_back((v,pushed))
       }
     }
   }
@@ -1592,442 +1659,455 @@ Secretary: random order; observe first $n/e$ candidates, remember best rank seen
 P(\text{success})\approx 1/e
 \]
 
+
 \sectiontitle{WORKED EXAM PROBLEMS}
 
 \workedq{P01}{Loop invariant proof: linear search returns matching index or NIL.}{
-\inv before iteration $i$, no earlier position contains $v$: $A[j]\ne v$ for all $j<i$. \init $i=1$: empty set. \maint if $A[i]\ne v$, then the statement extends to all $j<i+1$. \term if equality found, returned index correct; if loop finishes, invariant says no position contains $v$.
+\inv before iteration i, no earlier position contains v: A[j] != v for all j<i. \init i=1: empty set. \maint if A[i] != v, then the statement extends to all j<i+1. \term if equality found, returned index correct; if loop finishes, invariant says no position contains v.
 }
 
-\workedq{P02}{Asymptotic proof with constants: show $(n+a)^b=\Theta(n^b)$ for fixed constants.}{
-For $n\ge2|a|$: $n/2\le n+a\le 2n$. Raise to fixed $b>0$: $2^{-b}n^b\le(n+a)^b\le2^bn^b$. Choose constants $c_1=2^{-b},c_2=2^b,n_0=2|a|$.
+\workedq{P02}{Asymptotic proof with constants: show (n+a)\^{} b = Theta(n\^{} b) for fixed constants.}{
+For n>=2|a|: n/2 <= n+a <= 2n. Raise to fixed b>0: 2\^{}(-b) n\^{} b <= (n+a)\^{} b <= 2\^{} b n\^{} b. Choose constants c1=2\^{}(-b), c2=2\^{} b, n0=2|a|.
 }
 
-\workedq{P03}{Recursion tree: $T(n)=8T(n/2)+\Theta(n^2)$, leaves dominate.}{
-Level $i$: $8^i$ nodes, size $n/2^i$, work $8^i c(n/2^i)^2=cn^2 2^i$. Sum until $\lg n$: $cn^2\sum_{i=0}^{\lg n}2^i=\Theta(n^3)$. Leaves: $8^{\lg n}=n^3$. Hence $\Theta(n^3)$.
+\workedq{P03}{Recursion tree: T(n)=8T(n/2)+Theta(n\^{}2), leaves dominate.}{
+Level i: 8\^{} i nodes, size n/2\^{} i, work 8\^{} i*c*(n/2\^{} i)\^{}2 = c*n\^{}2*2\^{} i. Sum until lg n: c*n\^{}2*sum\_{i=0..lg n} 2\^{} i = Theta(n\^{}3). Leaves: 8\^{}(lg n)=n\^{}3. Hence Theta(n\^{}3).
 }
 
 \workedq{P04}{Recursive insertion sort: remove last element, sort prefix, insert last.}{
-Recurrence $T(n)=T(n-1)+\Theta(n)$. Unroll: $T(n)=\Theta(\sum_{i=1}^n i)=\Theta(n^2)$. Correctness by induction: sorted prefix by IH; insertion puts last element in unique sorted position.
+Recurrence T(n)=T(n-1)+Theta(n). Unroll: T(n)=Theta(sum\_{i=1..n} i)=Theta(n\^{}2). Correctness by induction: sorted prefix by IH; insertion puts last element in unique sorted position.
 }
 
-\workedq{P05}{Strengthened recurrence proof: split sizes $3n/5,4n/5$ plus linear work.}{
-$T(n)=T(3n/5)+T(4n/5)+an$. Guess $\Theta(n^2)$ since $(3/5)^2+(4/5)^2=1$. Upper needs slack: IH $T(m)\le cm^2-dm$. Then $T(n)\le cn^2-d(7n/5)+an\le cn^2-dn$ iff $d\ge5a/2$. Pick $d$, then pick $c$ for bases. Lower: $T(n)\ge c((3n/5)^2+(4n/5)^2)=cn^2$.
+\workedq{P05}{Strengthened recurrence proof: split sizes 3n/5, 4n/5 plus linear work.}{
+T(n)=T(3n/5)+T(4n/5)+a*n. Guess Theta(n\^{}2) since (3/5)\^{}2+(4/5)\^{}2=1. Upper needs slack: IH T(m)<=c*m\^{}2-d*m. Then T(n)<=c*n\^{}2-d*(7n/5)+a*n <= c*n\^{}2-d*n iff d>=5a/2. Pick d, then pick c for bases. Lower: T(n)>=c*((3n/5)\^{}2+(4n/5)\^{}2)=c*n\^{}2.
 }
 
 \workedq{P06}{Master/Akra pattern: choose fastest among several recurrence-defined algorithms.}{
-Compute exponent. $aT(n/b)+n^k$: compare $k$ to $\log_ba$. Examples: $2T(n/2)+n^3\to\Theta(n^3)$; $30T(n/4)+n\to\Theta(n^{\log_4 30})$; $8T(n/2)+1\to\Theta(n^3)$; $T(n/2)+n^4\to\Theta(n^4)$; $2T(n-1)+1\to\Theta(2^n)$. Pick smallest asymptotic.
+Compute exponent. aT(n/b)+n\^{} k: compare k to log base b of a. Examples: 2T(n/2)+n\^{}3 -> Theta(n\^{}3); 30T(n/4)+n -> Theta(n\^{}(log\_4 30)); 8T(n/2)+1 -> Theta(n\^{}3); T(n/2)+n\^{}4 -> Theta(n\^{}4); 2T(n-1)+1 -> Theta(2\^{} n). Pick smallest asymptotic.
 }
 
-\workedq{P07}{Restaurant spacing DP: choose subset of line positions at mutual distance at least $k$.}{
-Sort by position. $dp[i]=$ max profit using restaurants $i..n$. $next(i)=$ first $j>i$ with $M_j\ge M_i+k$. $dp[n+1]=0$, $dp[i]=\max(dp[i+1],p_i+dp[next(i)])$. \ans $dp[1]$. Proof: optimum skips $i$ or takes $i$, then all remaining choices start at $next(i)$. Runtime $O(n\log n)$ with binary search.
+\workedq{P07}{Restaurant spacing DP: choose subset of line positions at mutual distance at least k.}{
+Sort by position. dp[i] = max profit using restaurants i..n. next(i) = first j>i with M[j]>=M[i]+k. dp[n+1]=0, dp[i]=max(dp[i+1], p[i]+dp[next(i)]). \ans dp[1]. Proof: optimum skips i or takes i, then all remaining choices start at next(i). Runtime O(n log n) with binary search.
 }
 
 \workedq{P08}{Restaurant variant: force the current restaurant to be the leftmost open one.}{
-$c[i]=$ best profit among solutions whose leftmost chosen restaurant is $i$. Then $c[i]=p_i+\max\{c[j]:j>i, M_j\ge M_i+k\}$, with empty max $0$. \ans $\max_i c[i]$. Use suffix maxima plus binary search for $O(n\log n)$, or scan for $O(n^2)$.
+c[i] = best profit among solutions whose leftmost chosen restaurant is i. Then c[i]=p[i]+max\{c[j]: j>i and M[j]>=M[i]+k\}, with empty max 0. \ans max\_i c[i]. Use suffix maxima plus binary search for O(n log n), or scan for O(n\^{}2).
 }
 
-\workedq{P09}{Binary search proof: sorted array membership in $O(\log n)$.}{
-Maintain half-open interval $[l,r)$ with invariant: if $x$ is present then it lies in $A[l..r)$. Compare with $A[m]$. If $A[m]<x$, discard $[l,m]$; if $A[m]>x$, discard $[m,r)$. Sortedness preserves invariant. Termination gives found index or empty candidate set. Runtime $T(n)=T(n/2)+O(1)$.
+\workedq{P09}{Binary search proof: sorted array membership in O(log n).}{
+Maintain half-open interval [l,r) with invariant: if x is present then it lies in A[l..r). Compare with A[m]. If A[m]<x, discard [l,m]; if A[m]>x, discard [m,r). Sortedness preserves invariant. Termination gives found index or empty candidate set. Runtime T(n)=T(n/2)+O(1).
 }
 
-\workedq{P10}{2D sorted matrix: rows and columns increasing, find $x$ in $O(n)$.}{
-Start at top-right $(i=1,j=n)$. If $A[i,j]=x$ return. If $A[i,j]>x$, move left: everything below in column $j$ is also $>x$. If $A[i,j]<x$, move down: everything left in row $i$ is also $<x$. Each step removes one row/column, so at most $2n-1$ steps.
+\workedq{P10}{2D sorted matrix: rows and columns increasing, find x in O(n).}{
+Start at top-right (i=1,j=n). If A[i,j]=x return. If A[i,j]>x, move left: everything below in column j is also >x. If A[i,j]<x, move down: everything left in row i is also <x. Each step removes one row/column, so at most 2n-1 steps.
 }
 
-\workedq{P11}{Augmented BST interval counting: count keys in $[a,b]$ with subtree sizes.}{
-Store $size(x)=1+size(L)+size(R)$ and update on insert/delete rotations/path. $rank_{<}(x)$ follows search path; when moving right add $size(left)+1$. $rank_{\le}(x)$ similarly includes equals. Count $[a,b]=rank_{\le}(b)-rank_{<}(a)$. Runtime $O(h)$.
+\workedq{P11}{Augmented BST interval counting: count keys in [a,b] with subtree sizes.}{
+Store size(x)=1+size(L)+size(R) and update on insert/delete rotations/path. rankLT(x) follows search path; when moving right add size(left)+1. rankLE(x) similarly includes equals. Count [a,b]=rankLE(b)-rankLT(a). Runtime O(h).
 }
 
-\workedq{P12}{MinStack: stack with Push, Pop, GetMin all worst-case $O(1)$.}{
-Use two stacks: data stack $S$, minimum stack $M$. Push $x$: push to $S$; if $M$ empty or $x\le top(M)$ push $x$ to $M$. Pop: $y=pop(S)$; if $y=top(M)$ pop $M$. GetMin returns $top(M)$. Duplicates need $\le$ on push, not just $<$.
+\workedq{P12}{MinStack: stack with Push, Pop, GetMin all worst-case O(1).}{
+Use two stacks: data stack S, minimum stack M. Push x: push to S; if M empty or x<=top(M) push x to M. Pop: y=pop(S); if y=top(M) pop M. GetMin returns top(M). Duplicates need <= on push, not just <.
 }
 
 \workedq{P13}{Heap / priority queue trace: Build-Max-Heap and Heapify correctness.}{
-BuildHeap calls Heapify from $\lfloor n/2\rfloor$ down to 1. Invariant: before processing $i$, all nodes $>i$ root heaps. Heapify assumes children heaps and pushes violation downward. Runtime $\sum_h (n/2^{h+1})O(h)=O(n)$, not $O(n\log n)$.
+BuildHeap calls Heapify from floor(n/2) down to 1. Invariant: before processing i, all nodes >i root heaps. Heapify assumes children heaps and pushes violation downward. Runtime sum over heights h of (n/2\^{}(h+1))*O(h)=O(n), not O(n log n).
 }
 
-\workedq{P14}{Comparison sorting lower bound: prove $\Omega(n\log n)$ comparisons.}{
-Any deterministic comparison sort is a decision tree. Each permutation of $n$ distinct keys must end in a different leaf, so at least $n!$ leaves. Height $h$ satisfies $2^h\ge n!$, so $h\ge\log_2(n!)=\Omega(n\log n)$.
+\workedq{P14}{Comparison sorting lower bound: prove Omega(n log n) comparisons.}{
+Any deterministic comparison sort is a decision tree. Each permutation of n distinct keys must end in a different leaf, so at least n! leaves. Height h satisfies 2\^{} h >= n!, so h>=log2(n!)=Omega(n log n).
 }
 
 \workedq{P15}{Randomized Quicksort comparison probability relative to a fixed element.}{
-For ranks $i<j$, they are compared iff the first pivot chosen among ranks $i..j$ is either $i$ or $j$. Thus $P(i,j\text{ compared})=2/(j-i+1)$. For element of rank $r$, probability with rank $q$ is $2/(|q-r|+1)$; sort options by distance from $r$.
+For ranks i<j, they are compared iff the first pivot chosen among ranks i..j is either i or j. Thus P(i,j compared)=2/(j-i+1). For element of rank r, probability with rank q is 2/(|q-r|+1); sort options by distance from r.
 }
 
 \workedq{P16}{All-equal Lomuto partition: bad split and robust duplicate fix.}{
-If partition condition is $\le pivot$, all equal elements move left, pivot index returns $r$. Recurrence $T(n)=T(n-1)+\Theta(n)=\Theta(n^2)$. Fix with 3-way partition into $<,=,>$ pivot or choose middle of equal block.
+If partition condition is <= pivot, all equal elements move left, pivot index returns r. Recurrence T(n)=T(n-1)+Theta(n)=Theta(n\^{}2). Fix with 3-way partition into <,=,> pivot or choose middle of equal block.
 }
 
 \workedq{P17}{Simple uniform hashing: expected number of pair collisions.}{
-$X=\sum_{i<j}X_{ij}$, $X_{ij}=1[h(i)=h(j)]$. $E[X_{ij}]=1/m$. Thus $E[X]={n\choose2}/m=\Theta(n^2/m)$. For collisions with first slot only: pair probability $1/m^2$, so expectation ${n\choose2}/m^2=\Theta(n^2/m^2)$.
+X=sum over pairs i<j of X[i,j], where X[i,j]=1[h(i)=h(j)]. E[X[i,j]]=1/m. Thus E[X]=C(n,2)/m=Theta(n\^{}2/m). For collisions with first slot only: pair probability 1/m\^{}2, so expectation C(n,2)/m\^{}2=Theta(n\^{}2/m\^{}2).
 }
 
-\workedq{P18}{Hash values are length-$\ell$ arrays over $m$ symbols: expected collisions at most 1.}{
-For fixed distinct $x,y$, collision requires equality in all $\ell$ coordinates, so $P[x,y\text{ collide}]=(1/m)^\ell$. Let $X=\sum_{x<y}X_{xy}$. Then $E[X]={n\choose2}/m^\ell\le n^2/(2m^\ell)\le1$ if $m^\ell\ge n^2$.
+\workedq{P18}{Hash values are length-ell arrays over m symbols: expected collisions at most 1.}{
+For fixed distinct x,y, collision requires equality in all ell coordinates, so P[x,y collide]=(1/m)\^{} ell. Let X=sum over pairs x<y of X[x,y]. Then E[X]=C(n,2)/m\^{} ell <= n\^{}2/(2m\^{} ell) <= 1 if m\^{} ell >= n\^{}2.
 }
 
-\workedq{P19}{Hash chains high-probability bound: no bucket longer than $\ell$.}{
-A $k$-collision is a $k$-set in one bucket. $E[\#k\text{-collisions}]\le {n\choose k}/m^{k-1}\le n^k/m^{k-1}$. Chain length $>\ell$ iff an $(\ell+1)$-collision exists. If $m\ge100n^{1+1/\ell}$, then $E[\#(\ell+1)\text{-collisions}]\le n^{\ell+1}/m^\ell\le1/100^\ell\le0.01$. Markov: bad prob $\le0.01$.
+\workedq{P19}{Hash chains high-probability bound: no bucket longer than ell.}{
+A k-collision is a k-set in one bucket. E[\# k-collisions] <= C(n,k)/m\^{}(k-1) <= n\^{} k/m\^{}(k-1). Chain length >ell iff an (ell+1)-collision exists. If m>=100n\^{}(1+1/ell), then E[\#(ell+1)-collisions] <= n\^{}(ell+1)/m\^{} ell <= 1/100\^{} ell <=0.01. Markov: bad prob <=0.01.
 }
 
 \workedq{P20}{Expected hires with random arrival, skip first 10 percent.}{
-For position $i>n/10$, indicator $X_i=1$ if candidate $i$ is best among first $i$. $P[X_i=1]=1/i$. Expected hires $=\sum_{i=n/10+1}^n1/i\le\int_{n/10}^n dx/x=\ln 10<10$.
+For position i>n/10, indicator X[i]=1 if candidate i is best among first i. P[X[i]=1]=1/i. Expected hires = sum\_{i=n/10+1..n} 1/i <= integral from n/10 to n of dx/x = ln 10 < 10.
 }
 
 \workedq{P21}{Random edge/color expectation: count bad local events by indicators.}{
-If each edge/vertex color is independent uniform among $q$ colors, define $X_e=1$ if event $e$ is bad. Usually $P[X_e=1]$ is $1/q$ or $1/q^r$. Then $E[\#bad]=\sum_eP[X_e=1]$. Use Markov $P[\#bad\ge1]\le E[\#bad]$ for existence/probability bounds.
+If each edge/vertex color is independent uniform among q colors, define X[e]=1 if event e is bad. Usually P[X[e]=1] is 1/q or 1/q\^{} r. Then E[\#bad]=sum\_e P[X[e]=1]. Use Markov P[\#bad>=1] <= E[\#bad] for existence/probability bounds.
 }
 
 \workedq{P22}{Bipartite matching as unit-capacity max-flow.}{
-Build $s\to L$ cap 1; original edges $L\to R$ cap 1; $R\to t$ cap 1. Integral capacities give integral max flow. Capacity 1 forces each vertex used once. Flow edge $l\to r$ is a matched pair; every matching gives same-size flow. Hence max flow = max matching.
+Build s->L cap 1; original edges L->R cap 1; R->t cap 1. Integral capacities give integral max flow. Capacity 1 forces each vertex used once. Flow edge l->r is a matched pair; every matching gives same-size flow. Hence max flow = max matching.
 }
 
 \workedq{P23}{Capacitated activity/cheese assignment: each person gets one acceptable item, bins have capacities.}{
-Network: $s\to$ each person/type cap demand; person/type$\to$item if acceptable cap INF or demand; item$\to t$ cap supply/spots. Feasible iff maxflow equals total people/students. Integral flow gives integer assignment; assignment gives flow.
+Network: s->each person/type cap demand; person/type->item if acceptable cap INF or demand; item->t cap supply/spots. Feasible iff maxflow equals total people/students. Integral flow gives integer assignment; assignment gives flow.
 }
 
 \workedq{P24}{Domino tiling / maximum non-overlapping adjacent grid pairs.}{
-Checkerboard color cells. Black cells $L$, white cells $R$. For every adjacent allowed pair add edge $L\to R$. Max domino placement = maximum bipartite matching: each domino is one matched edge and matching prevents cell reuse.
+Checkerboard color cells. Black cells L, white cells R. For every adjacent allowed pair add edge L->R. Max domino placement = maximum bipartite matching: each domino is one matched edge and matching prevents cell reuse.
 }
 
 \workedq{P25}{Edge-disjoint paths: route multiple paths without reusing edges.}{
-Give every edge capacity 1 and run maxflow. Value $k$ iff there are $k$ edge-disjoint paths (integrality). For undirected edges, either replace by two directed arcs sharing one unit-capacity gadget, or orient both ways carefully with a single capacity-1 edge gadget.
+Give every edge capacity 1 and run maxflow. Value k iff there are k edge-disjoint paths (integrality). For undirected edges, either replace by two directed arcs sharing one unit-capacity gadget, or orient both ways carefully with a single capacity-1 edge gadget.
 }
 
-\workedq{P26}{Vertex-disjoint paths / simple path through required vertex $z$.}{
-To find simple path $x\leadsto z\leadsto y$, need internally vertex-disjoint paths from $z$ to $x$ and $z$ to $y$. Split every vertex $v$ into $v_{in}\to v_{out}$ cap 1 (INF for terminals if allowed). Original edge $u-v$ becomes arcs $u_{out}\to v_{in}$ and $v_{out}\to u_{in}$. Add $x,y\to t$ cap 1, source $z$, ask maxflow value 2.
+\workedq{P26}{Vertex-disjoint paths / simple path through required vertex z.}{
+To find simple path x->z->y, need internally vertex-disjoint paths from z to x and z to y. Split every vertex v into v.in->v.out cap 1 (INF for terminals if allowed). Original edge u-v becomes arcs u.out->v.in and v.out->u.in. Add x,y->t cap 1, source z, ask maxflow value 2.
 }
 
-\workedq{P27}{Special required edge $e^*=\{a,b\}$ in an edge-simple $u$-$v$ trail.}{
-Try both orientations. For orientation $a\to b$, remove $e^*$ and require edge-disjoint prefix/suffix paths $u\leadsto a$ and $b\leadsto v$ using unit edge capacities; similarly orientation $b\to a$. If flow construction returns both paths, concatenate prefix + $e^*$ + suffix. If both orientations fail, no valid trail.
+\workedq{P27}{Special required edge e*=\{a,b\} in an edge-simple u-v trail.}{
+Try both orientations. For orientation a->b, remove e* and require edge-disjoint prefix/suffix paths u->a and b->v using unit edge capacities; similarly orientation b->a. If flow construction returns both paths, concatenate prefix + e* + suffix. If both orientations fail, no valid trail.
 }
 
-\workedq{P28}{Haunted-house escape: $k$ agents, grid over times, ghosts, no two agents same cell.}{
-Build time-expanded flow. For every safe cell $(c,t)$ create $c^t_{in}\to c^t_{out}$ cap 1. For each legal stay/move $c\to c'$ add $c^t_{out}\to c'^{t+1}_{in}$ cap 1 if target safe. Source to start cells at time 1 cap 1. Boundary cells at times $\le T$ connect to sink cap 1. Maxflow $=k$ iff all escape. Size $O(Tn^2)$ nodes/edges up to constants.
+\workedq{P28}{Haunted-house escape: k agents, grid over times, ghosts, no two agents same cell.}{
+Build time-expanded flow. For every safe cell (c,t) create cell(c,t).in->cell(c,t).out cap 1. For each legal stay/move c->c' add cell(c,t).out->cell(c',t+1).in cap 1 if target safe. Source to start cells at time 1 cap 1. Boundary cells at times <=T connect to sink cap 1. Maxflow=k iff all escape. Size O(Tn\^{}2) nodes/edges up to constants.
 }
 
-\workedq{P29}{Shortest path with battery/resource budget: minimize time, spend at most $B$.}{
-State graph has vertices $(v,b)$ = at $v$ after spending $b$ battery, $0\le b\le B$. For edge $e=(u,v)$ add $(u,b)\to(v,b+b(e))$ with weight $t(e)$ if $b+b(e)\le B$ (both directions if undirected). Run Dijkstra from $(s,0)$. \ans $\min_{b\le B}dist(t,b)$. Runtime $O(BE\log(BV))$.
+\workedq{P29}{Shortest path with battery/resource budget: minimize time, spend at most B.}{
+State graph has vertices (v,b) = at v after spending b battery, 0<=b<=B. For edge e=(u,v) add (u,b)->(v,b+batt(e)) with weight time(e) if b+batt(e)<=B (both directions if undirected). Run Dijkstra from (s,0). \ans min over b<=B of dist(t,b). Runtime O(BE log(BV)).
 }
 
 \workedq{P30}{Road network mutual reachability forbidden for listed directed pairs.}{
-Compute SCCs with Kosaraju/Tarjan in $O(V+E)$. For each forbidden pair $(u,v)$, reject iff $comp[u]=comp[v]$. Same SCC iff $u\leadsto v$ and $v\leadsto u$. If all pairs pass, accept. Given $\ell\le E$, total runtime $O(V+E)$.
+Compute SCCs with Kosaraju/Tarjan in O(V+E). For each forbidden pair (u,v), reject iff comp[u]=comp[v]. Same SCC iff u->v and v->u are both reachable. If all pairs pass, accept. Given ell<=E, total runtime O(V+E).
 }
 
 \workedq{P31}{Topological-sort / Course Schedule: can all prerequisites be satisfied?}{
-Directed graph prerequisite $u\to v$. Run DFS colors or Kahn indegrees. If cycle/back edge exists, impossible. Otherwise topo order exists and gives valid schedule. Runtime $O(V+E)$. Proof: DAG iff topo order iff no DFS back edge.
+Directed graph prerequisite u->v. Run DFS colors or Kahn indegrees. If cycle/back edge exists, impossible. Otherwise topo order exists and gives valid schedule. Runtime O(V+E). Proof: DAG iff topo order iff no DFS back edge.
 }
 
-\workedq{P32}{DAG maximum-weight path with vertex weights from $s$ to $t$.}{
-Topologically sort. Initialize $dp[s]=w(s)$, others $-\infty$. In topo order, relax $u\to v$: $dp[v]=\max(dp[v],dp[u]+w(v))$. \ans $dp[t]$. Correct because all predecessors of $v$ processed before $v$. Runtime $O(V+E)$.
+\workedq{P32}{DAG maximum-weight path with vertex weights from s to t.}{
+Topologically sort. Initialize dp[s]=w(s), others -INF. In topo order, relax u->v: dp[v]=max(dp[v], dp[u]+w(v)). \ans dp[t]. Correct because all predecessors of v processed before v. Runtime O(V+E).
 }
 
 \workedq{P33}{Verify claimed shortest-path distances in graph with negative edges but no negative cycles.}{
-Check $d[s]=0$. For every edge $(u,v)$ check triangle inequality $d[v]\le d[u]+w(u,v)$; if violated reject. Build tight-edge graph $E'=\{(u,v):d[v]=d[u]+w(u,v)\}$. DFS/BFS from $s$ in $E'$. Accept iff all vertices reached. Inequality gives $d[v]\le$ every path length; tight paths give actual paths of length $d[v]$, so equality.
+Check d[s]=0. For every edge (u,v) check triangle inequality d[v]<=d[u]+w(u,v); if violated reject. Build tight-edge graph E'=\{(u,v): d[v]=d[u]+w(u,v)\}. DFS/BFS from s in E'. Accept iff all vertices reached. Inequality gives d[v] <= every path length; tight paths give actual paths of length d[v], so equality.
 }
 
 \workedq{P34}{Bellman-Ford negative-cycle / altitude consistency with signed edge changes.}{
-A bad closed tour is a directed cycle with nonzero total weight. Run Bellman-Ford on $w$ and on $-w$ from a super-source connected to all vertices by 0 edges. A negative cycle in $w$ or in $-w$ means some cycle has nonzero sum. If neither run detects, all cycles have sum 0. Runtime $O(VE)$.
+A bad closed tour is a directed cycle with nonzero total weight. Run Bellman-Ford on w and on -w from a super-source connected to all vertices by 0 edges. A negative cycle in w or in -w means some cycle has nonzero sum. If neither run detects, all cycles have sum 0. Runtime O(VE).
 }
 
 \workedq{P35}{Shortest-path weight transform MCQ: add constant vs multiply by positive constant.}{
-Multiplying all edge weights by $a>0$ preserves every path ordering: $w(P)$ becomes $a w(P)$. Adding $a$ to every edge changes $w(P)$ to $w(P)+a\cdot |P|$, so paths with different numbers of edges can change order.
+Multiplying all edge weights by a>0 preserves every path ordering: w(P) becomes a*w(P). Adding a to every edge changes w(P) to w(P)+a*|P|, so paths with different numbers of edges can change order.
 }
 
 \workedq{P36}{Dijkstra choice proof: nonnegative weights only.}{
-Maintain finalized set $S$. Pick outside vertex $x$ with minimum tentative distance. Any $s\leadsto x$ path first crosses from $S$ to $V\setminus S$ at $(u,v)$; length to $v$ is at least $d[u]+w(u,v)\ge d[v]\ge d[x]$ because $w\ge0$. Thus $d[x]$ is final. Negative edges break this.
+Maintain finalized set S. Pick outside vertex x with minimum tentative distance. Any s->x path first crosses from S to V-S at (u,v); length to v is at least d[u]+w(u,v)>=d[v]>=d[x] because w>=0. Thus d[x] is final. Negative edges break this.
 }
 
 \workedq{P37}{Bellman-Ford exact invariant and negative-cycle certificate.}{
-After $i$ full passes, $d[v]$ is shortest path length among paths using at most $i$ edges. Induct by last edge. Without negative cycles, shortest paths can be simple, so use at most $V-1$ edges. If a $V$-th pass still relaxes, there is a reachable negative cycle.
+After i full passes, d[v] is shortest path length among paths using at most i edges. Induct by last edge. Without negative cycles, shortest paths can be simple, so use at most V-1 edges. If a V-th pass still relaxes, there is a reachable negative cycle.
 }
 
-\workedq{P38}{MST over complete graph of points: connect all islands with $n-1$ routes.}{
-Build complete undirected graph on the $n$ points with edge weight squared Euclidean distance. Need connected graph with $n-1$ routes minimizing total cost = MST. Run Kruskal/Prim on $O(n^2)$ edges. Runtime $O(n^2\log n)$; output MST edges.
+\workedq{P38}{MST over complete graph of points: connect all islands with n-1 routes.}{
+Build complete undirected graph on the n points with edge weight squared Euclidean distance. Need connected graph with n-1 routes minimizing total cost = MST. Run Kruskal/Prim on O(n\^{}2) edges. Runtime O(n\^{}2 log n); output MST edges.
 }
 
 \workedq{P39}{MST cut/cycle proof: min crossing edge safe, max cycle edge unsafe.}{
-Cut: add lightest crossing edge $e$ to an MST not using it; cycle contains another crossing edge $f$ with $w(f)\ge w(e)$; swap $f\mapsto e$. Cycle: if unique heaviest edge $e$ of a cycle is in MST, remove it; another cycle edge reconnects the cut cheaper, contradiction.
+Cut: add lightest crossing edge e to an MST not using it; cycle contains another crossing edge f with w(f)>=w(e); swap f->e. Cycle: if unique heaviest edge e of a cycle is in MST, remove it; another cycle edge reconnects the cut cheaper, contradiction.
 }
 
 \workedq{P40}{Minimum-weight feedback edge set in undirected weighted graph.}{
-Need remove edges so remaining graph is acyclic. Equivalent: keep an acyclic subset of maximum total weight. In connected graph, max kept acyclic set is a maximum spanning tree. Run Kruskal in descending weights, keep tree edges, remove all others. Correct because any acyclic connected kept set has at most $V-1$ edges and maximum spanning tree maximizes kept weight.
+Need remove edges so remaining graph is acyclic. Equivalent: keep an acyclic subset of maximum total weight. In connected graph, max kept acyclic set is a maximum spanning tree. Run Kruskal in descending weights, keep tree edges, remove all others. Correct because any acyclic connected kept set has at most V-1 edges and maximum spanning tree maximizes kept weight.
 }
 
 \workedq{P41}{Airport + roads connectivity: cities can connect by roads or both having airports.}{
-Add super-node $r$. For every city $v$, add edge $(r,v)$ of cost airport cost $c_v$. Keep original road edges with costs $w_e$. Run MST on augmented graph. Chosen original edges = roads; chosen $r$-edges = airports. Super-node models free travel between airports. Runtime $O((E+V)\log(E+V))$.
+Add super-node r. For every city v, add edge (r,v) of cost airport cost c[v]. Keep original road edges with costs w[e]. Run MST on augmented graph. Chosen original edges = roads; chosen r-edges = airports. Super-node models free travel between airports. Runtime O((E+V)log(E+V)).
 }
 
-\workedq{P42}{Edge belongs to at least one MST: linear-time query for edge $e=(a,b)$.}{
-Let $W=w(e)$. Run DFS/BFS from $a$ using only edges with weight $<W$. If $b$ reached, then $e$ is heaviest on a strictly lighter cycle, so no MST contains it. If not reached, take component $S$ of $a$ in subgraph $w<W$; every edge crossing $(S,V\setminus S)$ has weight $\ge W$, and $e$ crosses, so $e$ is lightest for this cut. Thus some MST contains $e$. Runtime $O(V+E)$.
+\workedq{P42}{Edge belongs to at least one MST: linear-time query for edge e=(a,b).}{
+Let W=w(e). Run DFS/BFS from a using only edges with weight <W. If b reached, then e is heaviest on a strictly lighter cycle, so no MST contains it. If not reached, take component S of a in subgraph w<W; every edge crossing (S,V-S) has weight >=W, and e crosses, so e is lightest for this cut. Thus some MST contains e. Runtime O(V+E).
 }
 
 \workedq{P43}{Unique MST vs many MSTs: detect swappable equal-weight non-tree edge.}{
-Compute one MST $T$. For every non-tree edge $e=(u,v)$, find maximum edge weight $M$ on the unique path $u\leadsto v$ in $T$. If $w(e)=M$, swap $e$ with a max edge on that path to get another MST: MANY. If all $w(e)>M$, no equal swap exists: ONE. Naive runtime $O(EV)$; faster with LCA if needed.
+Compute one MST T. For every non-tree edge e=(u,v), find maximum edge weight M on the unique path u->v in T. If w(e)=M, swap e with a max edge on that path to get another MST: MANY. If all w(e)>M, no equal swap exists: ONE. Naive runtime O(EV); faster with LCA if needed.
 }
 
-\workedq{P44}{Connected graph with $n$ vertices and $n$ edges: count spanning trees in $O(n)$.}{
-Connected with $|E|=|V|$ has exactly one cycle. Find cycle length $c$ by DFS back edge or repeatedly delete degree-1 leaves until the cycle remains. Every spanning tree is obtained by deleting exactly one cycle edge; deleting non-cycle edge disconnects. \ans number of spanning trees $=c$, hence between 3 and $n$ for simple graph.
+\workedq{P44}{Connected graph with n vertices and n edges: count spanning trees in O(n).}{
+Connected with |E|=|V| has exactly one cycle. Find cycle length c by DFS back edge or repeatedly delete degree-1 leaves until the cycle remains. Every spanning tree is obtained by deleting exactly one cycle edge; deleting non-cycle edge disconnects. \ans number of spanning trees = c, hence between 3 and n for simple graph.
 }
 
 \workedq{P45}{Tree diameter: output farthest pair of nodes in binary tree.}{
-Postorder returns $(height,deepest,bestLen,bestPair)$. At node $u$, candidate crossing pair is deepest node in left subtree to deepest node in right subtree with length $h_L+h_R+2$ (handle empty child). Best is max of left best, right best, crossing. Runtime $O(n)$.
+Postorder returns (height, deepest, bestLen, bestPair). At node u, candidate crossing pair is deepest node in left subtree to deepest node in right subtree with length hL+hR+2 (handle empty child). Best is max of left best, right best, crossing. Runtime O(n).
 }
 
 \workedq{P46}{Longest simple path constrained to pass through the root.}{
-Compute heights of left and right subtrees. If height counts edges and empty height is $-1$, answer is $h(root.left)+h(root.right)+2$. The path through root is maximized by independently choosing deepest descendant on each side. Runtime $O(n)$.
+Compute heights of left and right subtrees. If height counts edges and empty height is -1, answer is h(root.left)+h(root.right)+2. The path through root is maximized by independently choosing deepest descendant on each side. Runtime O(n).
 }
 
 \workedq{P47}{Reconstruct binary tree from inorder and postorder traversals.}{
-Root is last element of postorder. Find root in inorder; left/right inorder blocks determine subtree sizes. Split postorder into corresponding left/right blocks, recurse. Base empty list. Runtime $O(n)$ with value$\to$inorder-index map. Preorder+inorder similar; preorder+postorder alone is not unique.
+Root is last element of postorder. Find root in inorder; left/right inorder blocks determine subtree sizes. Split postorder into corresponding left/right blocks, recurse. Base empty list. Runtime O(n) with value-to-inorder-index map. Preorder+inorder similar; preorder+postorder alone is not unique.
 }
 
 \workedq{P48}{Travel passes DP: cover sorted travel days with 1/7/30-day passes.}{
-Days $d_1<\cdots<d_n$, lengths $L$, costs $c_L$. $dp[i]=$ min cost to cover days $i..n$. $next(i,L)=$ first $j$ with $d_j\ge d_i+L$. $dp[n+1]=0$, $dp[i]=\min_L(c_L+dp[next(i,L)])$. Fill decreasing $i$. \ans $dp[1]$. Trap: pass bought on day $d_i$ covers days $<d_i+L$.
+Days d[1]<...<d[n], lengths L, costs c[L]. dp[i] = min cost to cover days i..n. next(i,L)=first j with d[j]>=d[i]+L. dp[n+1]=0, dp[i]=min over L of c[L]+dp[next(i,L)]. Fill decreasing i. \ans dp[1]. Trap: pass bought on day d[i] covers days <d[i]+L.
 }
 
 \workedq{P49}{Weighted interval scheduling: choose non-overlapping intervals of max weight.}{
-Sort by finish. $p(i)=$ last interval ending $\le start_i$. $dp[i]=$ best using first $i$ intervals. $dp[0]=0$, $dp[i]=\max(dp[i-1],w_i+dp[p(i)])$. \ans $dp[n]$. Runtime $O(n\log n)$ with binary search for $p$.
+Sort by finish. p(i)=last interval ending <=start[i]. dp[i]=best using first i intervals. dp[0]=0, dp[i]=max(dp[i-1], w[i]+dp[p(i)]). \ans dp[n]. Runtime O(n log n) with binary search for p.
 }
 
-\workedq{P50}{Cardinality-constrained weighted intervals: choose at most $k$ disjoint intervals.}{
-Sort by finish and compute $p(i)$. $dp[i][j]=$ best value using first $i$ intervals and at most $j$ intervals. Base $dp[0][j]=dp[i][0]=0$. Recurrence $dp[i][j]=\max(dp[i-1][j], w_i+dp[p(i)][j-1])$. \ans $dp[n][k]$. Runtime $O(nk+n\log n)$.
+\workedq{P50}{Cardinality-constrained weighted intervals: choose at most k disjoint intervals.}{
+Sort by finish and compute p(i). dp[i][j]=best value using first i intervals and at most j intervals. Base dp[0][j]=dp[i][0]=0. Recurrence dp[i][j]=max(dp[i-1][j], w[i]+dp[p(i)][j-1]). \ans dp[n][k]. Runtime O(nk+n log n).
 }
 
 \workedq{P51}{Interval scheduling greedy: max number of mutually disjoint intervals.}{
-Sort by increasing finish time. Repeatedly take first interval compatible with current last finish. Exchange proof: earliest-finishing interval $e$ can replace first interval of any optimum without reducing feasibility. Then recurse on intervals starting after $e$.
+Sort by increasing finish time. Repeatedly take first interval compatible with current last finish. Exchange proof: earliest-finishing interval e can replace first interval of any optimum without reducing feasibility. Then recurse on intervals starting after e.
 }
 
 \workedq{P52}{Divide farm into exactly 3 contiguous nonempty parts minimizing largest sum.}{
-Positive $A_i\le1000$. Binary search answer $M$ between $\max A_i$ and $\sum A_i$. Feasible$(M)$: greedily scan and start new part when adding next block would exceed $M$; let parts count be $q$. Feasible iff $q\le3$ (then split further to get exactly 3 nonempty parts). Monotone predicate. Since sum $\le1000n$, runtime $O(n\log n)$. Recover cuts by greedy under optimal $M$ and split if fewer than 3 parts.
+Input A[1..n], A[i] positive and A[i]<=1000. Need cuts i<j minimizing max(sum 1..i, sum i+1..j, sum j+1..n). Binary-search answer M = allowed max child area. Bounds: L=max A[i] (cannot put A[i] anywhere if M<A[i]), R=sum A[i] (one part contains all). Feasible(M): scan left->right with cur=0, parts=1; if cur+x<=M then cur+=x, else parts++, cur=x. Reject if parts>3. Why greedy works: for fixed M, greedy makes each part as long as possible, so after t parts it has covered at least as much prefix as any valid t-part partition; hence greedy uses the minimum possible \#parts. Therefore parts>3 => impossible. If parts<=3 => possible for exactly 3: n>=3 and all A[i]>0, so split existing nonempty parts until there are 3; splitting only decreases part sums. Predicate monotone: bigger M cannot need more parts. Binary search smallest feasible M. Runtime Feasible=O(n), R<=1000n => O(n log(1000n))=O(n log n). No direct sum(a,b) needed; cur is computed during scan. Recover cuts: rerun greedy at M*, then split if fewer than 3 parts, output the two cut indices.
 }
 
-\workedq{P53}{Split array into $k$ contiguous parts minimizing maximum load.}{
-Same as farm with $k$ instead of 3. Lower bound $L=\max a_i$, upper $R=\sum a_i$. Greedy feasibility uses minimum possible number of parts for capacity $M$. Binary search smallest feasible $M$. Runtime $O(n\log R)$; if values polynomially bounded, $O(n\log n)$.
+\workedq{P53}{Split array into k contiguous parts minimizing maximum load.}{
+Same as P52 with k instead of 3. L=max a[i], R=sum a[i]. Feasible(M) greedily computes the minimum number q of parts needed with each part sum<=M. Feasible iff q<=k; if exact k required and n>=k, split parts until k. Binary search smallest feasible M. Runtime O(n log R); if a[i] polynomially bounded, O(n log n).
 }
 
-\workedq{P54}{Short grid walk with value and move limit: moves right/up/diag, at most $3n/2$ moves.}{
-$dp[i][j][\ell]=$ max value reaching cell $(i,j)$ in exactly $\ell$ moves. Base $dp[0][0][0]=v(0,0)$. Transition from predecessors $(i-1,j)$, $(i,j-1)$, $(i-1,j-1)$ with $\ell-1$, add $v(i,j)$. \ans $\max_{\ell\le\lfloor3n/2\rfloor}dp[n][n][\ell]$. Runtime $O(n^3)$.
+\workedq{P54}{Short grid walk with value and move limit: moves right/up/diag, at most 3n/2 moves.}{
+dp[i][j][ell] = max value reaching cell (i,j) in exactly ell moves. Base dp[0][0][0]=v(0,0). Transition from predecessors (i-1,j), (i,j-1), (i-1,j-1) with ell-1, add v(i,j). \ans max over ell<=floor(3n/2) of dp[n][n][ell]. Runtime O(n\^{}3).
 }
 
-\workedq{P55}{Rod cutting / unbounded segmentation: maximize revenue over cuts summing to $n$.}{
-$r[0]=0$. For length $j=1..n$: $r[j]=\max_{1\le i\le j}(p_i+r[j-i])$. This chooses leftmost piece length $i$ and solves remainder optimally. Runtime $O(n^2)$, space $O(n)$. Store argmax to reconstruct cuts.
+\workedq{P55}{Rod cutting / unbounded segmentation: maximize revenue over cuts summing to n.}{
+r[0]=0. For length j=1..n: r[j]=max over 1<=i<=j of p[i]+r[j-i]. This chooses leftmost piece length i and solves remainder optimally. Runtime O(n\^{}2), space O(n). Store argmax to reconstruct cuts.
 }
 
 \workedq{P56}{Matrix-chain multiplication: choose parenthesization minimizing scalar multiplications.}{
-Matrices $A_i$ have dimensions $p_{i-1}\times p_i$. $m[i,i]=0$. For length $\ell=2..n$: $m[i,j]=\min_{i\le k<j}(m[i,k]+m[k+1,j]+p_{i-1}p_kp_j)$. \ans $m[1,n]$. Runtime $O(n^3)$, space $O(n^2)$.
+Matrices A[i] have dimensions p[i-1] x p[i]. m[i,i]=0. For length ell=2..n: m[i,j]=min over i<=k<j of m[i,k]+m[k+1,j]+p[i-1]*p[k]*p[j]. \ans m[1,n]. Runtime O(n\^{}3), space O(n\^{}2).
 }
 
 \workedq{P57}{LCS of two strings: subsequence, not substring.}{
-$dp[i][j]=$ LCS length of prefixes $X[1..i],Y[1..j]$. Base row/col 0. If $X_i=Y_j$, $dp[i][j]=1+dp[i-1][j-1]$; else $\max(dp[i-1][j],dp[i][j-1])$. Runtime $O(nm)$. Reconstruct by walking backward.
+dp[i][j] = LCS length of prefixes X[1..i], Y[1..j]. Base row/col 0. If X[i]=Y[j], dp[i][j]=1+dp[i-1][j-1]; else max(dp[i-1][j], dp[i][j-1]). Runtime O(nm). Reconstruct by walking backward.
 }
 
 \workedq{P58}{Longest increasing subsequence: standard DP and faster tails version.}{
-DP: $L[j]=1+\max\{L[i]:i<j,A[i]<A[j]\}$, empty max 0; answer $\max_jL[j]$, $O(n^2)$. Tails: maintain smallest possible tail for each length; for $x$, lower\_bound first tail $\ge x$ and replace. Length of tails = LIS length, $O(n\log n)$.
+DP: L[j]=1+max\{L[i]: i<j and A[i]<A[j]\}, empty max 0; answer max\_j L[j], O(n\^{}2). Tails: maintain smallest possible tail for each length; for x, lower\_bound first tail >= x and replace. Length of tails = LIS length, O(n log n).
 }
 
 \workedq{P59}{Longest modular increasing subsequence: increasing values and sum divisible by 3.}{
-$r[j,b]=$ best length of increasing subsequence ending at $j$ with sum mod 3 equal $b$. Initialize $r[j,A_j\bmod3]=1$. For all $i<j$ with $A_i<A_j$ and all $b$: $r[j,(b+A_j)\bmod3]=\max(r[j,(b+A_j)\bmod3], r[i,b]+1)$. \ans $\max_j r[j,0]$. Runtime $O(n^2)$.
+r[j,b] = best length of increasing subsequence ending at j with sum mod 3 equal b. Initialize r[j,A[j] mod 3]=1. For all i<j with A[i]<A[j] and all b: r[j,(b+A[j]) mod 3]=max(r[j,(b+A[j]) mod 3], r[i,b]+1). \ans max\_j r[j,0]. Runtime O(n\^{}2).
 }
 
-\workedq{P60}{0/1 knapsack: each item used at most once, capacity $W$.}{
-$dp[i][w]=$ best value using first $i$ items with capacity $w$. $dp[0][w]=0$. If $weight_i>w$, skip; else $dp[i][w]=\max(dp[i-1][w], value_i+dp[i-1][w-weight_i])$. Runtime $O(nW)$ pseudo-polynomial. 1D update $w$ decreasing.
+\workedq{P60}{0/1 knapsack: each item used at most once, capacity W.}{
+dp[i][w] = best value using first i items with capacity w. dp[0][w]=0. If weight[i]>w, skip; else dp[i][w]=max(dp[i-1][w], value[i]+dp[i-1][w-weight[i]]). Runtime O(nW) pseudo-polynomial. 1D update w decreasing.
 }
 
-\workedq{P61}{3-way equal partition: split positive integers into 3 subsets each sum $W/3$.}{
-If $W\not\equiv0\pmod3$, NO. Let target $S=W/3$. $dp[i][x][y]=$ possible after first $i$ items with subset1 sum $x$, subset2 sum $y$; subset3 implicit. Transition: put item $i$ in subset1 if $x\ge w_i$, subset2 if $y\ge w_i$, or subset3. \ans $dp[n][S][S]$. Runtime $O(nS^2)$.
+\workedq{P61}{3-way equal partition: split positive integers into 3 subsets each sum W/3.}{
+If W mod 3 != 0, NO. Let target S=W/3. dp[i][x][y] = possible after first i items with subset1 sum x, subset2 sum y; subset3 implicit. Transition: put item i in subset1 if x>=w[i], subset2 if y>=w[i], or subset3. \ans dp[n][S][S]. Runtime O(nS\^{}2).
 }
 
 \workedq{P62}{Coin-row two-player game: optimal play, take leftmost or rightmost coin.}{
-$dp[i][j]=$ max value current player can guarantee from interval $i..j$. $dp[i][i]=a_i$. Recurrence $dp[i][j]=\max(a_i+\min(dp[i+2][j],dp[i+1][j-1]),\ a_j+\min(dp[i+1][j-1],dp[i][j-2]))$. Opponent chooses the branch minimizing our future. Fill by interval length.
+dp[i][j] = max value current player can guarantee from interval i..j. dp[i][i]=a[i]. Recurrence dp[i][j]=max(a[i]+min(dp[i+2][j],dp[i+1][j-1]), a[j]+min(dp[i+1][j-1],dp[i][j-2])). Opponent chooses branch minimizing our future. Fill by interval length.
 }
 
 \workedq{P63}{Coin change / minimum number of coins, unlimited copies.}{
-$dp[0]=0$, $dp[x]=\infty$ initially. For amount $x=1..W$: $dp[x]=1+\min_{c\le x}dp[x-c]$. \ans $dp[W]$ or impossible if $\infty$. Runtime $O(W\cdot \#coins)$. For number of ways, loop coins outside and amounts increasing.
+dp[0]=0, dp[x]=INF initially. For amount x=1..W: dp[x]=1+min over c<=x of dp[x-c]. \ans dp[W] or impossible if INF. Runtime O(W*\#coins). For number of ways, loop coins outside and amounts increasing.
 }
 
 \workedq{P64}{Optimal BST DP with key probabilities / search frequencies.}{
-$e[i,j]=$ min expected cost for keys $i..j$, $w[i,j]=$ total probability/frequency in interval. Choose root $r$: $e[i,j]=\min_{r=i..j}(e[i,r-1]+e[r+1,j]+w[i,j])$. Empty interval cost 0. Fill by increasing length. Runtime $O(n^3)$.
+e[i,j] = min expected cost for keys i..j, w[i,j] = total probability/frequency in interval. Choose root r: e[i,j]=min over r=i..j of e[i,r-1]+e[r+1,j]+w[i,j]. Empty interval cost 0. Fill by increasing length. Runtime O(n\^{}3).
 }
 
 \workedq{P65}{DP answer skeleton when the problem statement is unfamiliar.}{
-State meaning with units and exact interval/index convention. Base cases. Transition: enumerate the first/last decision and combine with smaller solved states. Order: dependencies first. Answer: exact table cell. Correctness: induction in fill order; optimum uses one enumerated choice and every candidate is feasible. Runtime = states $\times$ transition cost.
+State meaning with units and exact interval/index convention. Base cases. Transition: enumerate the first/last decision and combine with smaller solved states. Order: dependencies first. Answer: exact table cell. Correctness: induction in fill order; optimum uses one enumerated choice and every candidate is feasible. Runtime = states * transition cost.
 }
 
-\workedq{P66}{Ski rental competitive analysis: rent price 1, buy price $B$.}{
-Algorithm: rent until total rent reaches $B$, then buy. If $T\le B$, ALG=$T$=OPT. If $T>B$, ALG$\le B+B=2B=2$OPT. Lower bound for deterministic algorithms: adversary stops just before algorithm buys or continues just after; no deterministic ratio $<2$.
+\workedq{P66}{Ski rental competitive analysis: rent price 1, buy price B.}{
+Algorithm: rent until total rent reaches B, then buy. If T<=B, ALG=T=OPT. If T>B, ALG<=B+B=2B=2OPT. Lower bound for deterministic algorithms: adversary stops just before algorithm buys or continues just after; no deterministic ratio <2.
 }
 
-\workedq{P67}{Paging/caching LRU: cache size $k$, prove $k$-competitive.}{
-Partition requests into phases with at most $k$ distinct pages; new phase starts when $(k+1)$-st distinct page appears. LRU has at most $k$ misses per phase. OPT has at least 1 miss per completed phase because phase plus next first request contains $k+1$ distinct pages. Hence LRU $\le k\cdot$OPT$+O(k)$.
+\workedq{P67}{Paging/caching LRU: cache size k, prove k-competitive.}{
+Partition requests into phases with at most k distinct pages; new phase starts when (k+1)-st distinct page appears. LRU has at most k misses per phase. OPT has at least 1 miss per completed phase because phase plus next first request contains k+1 distinct pages. Hence LRU <= k*OPT + O(k).
 }
 
 \workedq{P68}{Weighted majority / experts: bound mistakes against best expert.}{
-Weights start 1; after wrong prediction multiply expert weight by $\beta$. If algorithm makes a mistake, wrong side has weight $\ge W/2$, so $W'\le W(1+\beta)/2$. Best expert with $m^*$ mistakes has weight $\beta^{m^*}\le W_T\le n((1+\beta)/2)^M$. Solve for $M$.
+Weights start 1; after wrong prediction multiply expert weight by beta. If algorithm makes a mistake, wrong side has weight >=W/2, so W'<=W(1+beta)/2. Best expert with m* mistakes has weight beta\^{}(m*) <= W[T] <= n((1+beta)/2)\^{} M. Solve for M.
 }
 
 \workedq{P69}{Secretary problem: random order, choose maximum candidate online.}{
-Reject first $r=\lfloor n/e\rfloor$, remember best sample. Then accept first candidate better than all seen. Success if global best appears at position $i>r$ and best among first $i-1$ was in sample. Probability $\sum_{i=r+1}^n(1/n)(r/(i-1))\approx (r/n)\ln(n/r)\approx1/e$.
+Reject first r=floor(n/e), remember best sample. Then accept first candidate better than all seen. Success if global best appears at position i>r and best among first i-1 was in sample. Probability sum\_{i=r+1..n} (1/n)*(r/(i-1)) approx (r/n)ln(n/r) approx 1/e.
 }
 
 \workedq{P70}{Online bipartite matching: greedy and ranking guarantees.}{
-Greedy matches each arriving right vertex to any free neighbor. Each ALG edge can be charged by at most two OPT edges, so ALG $\ge$ OPT/2. Ranking: pick random priority order on offline left vertices; each arrival chooses highest-priority free neighbor; expected value $(1-1/e)$OPT.
+Greedy matches each arriving right vertex to any free neighbor. Each ALG edge can be charged by at most two OPT edges, so ALG >= OPT/2. Ranking: pick random priority order on offline left vertices; each arrival chooses highest-priority free neighbor; expected value (1-1/e)OPT.
 }
 
 \workedq{P71}{Prophet inequality: threshold at half expected maximum.}{
-Independent nonnegative $X_i$, known distributions. Let $M=\max_iX_i$, $z=E[M]$, threshold $\tau=z/2$. Accept first $X_i\ge\tau$. Guarantee $E[ALG]\ge z/2$. Proof uses $q=P[\forall i,X_i<\tau]$ and overshoots $(X_i-\tau)^+$; threshold contribution $\tau(1-q)$ plus overshoot contribution $q\sum_iE[(X_i-\tau)^+]$.
-}
-
-\workedq{P72}{Two Sum / pair with target: hash previous values.}{
-Scan left to right. Before processing $i$, map contains values from indices $<i$. Need $target-A[i]$ in map; if yes return pair. Else insert $A[i]\mapsto i$. Correct by invariant: when second element of any solution is scanned, first is already stored. Expected $O(n)$.
-}
-
-\workedq{P73}{Valid parentheses / bracket matching: stack invariant.}{
-Scan chars. Push opening brackets. On closing bracket, stack top must be matching opening; otherwise reject. End accept iff stack empty. Invariant: stack contains unmatched openings in order. Runtime $O(n)$.
-}
-
-\workedq{P74}{Number of islands / connected components in a grid.}{
-For every unvisited land cell, increment count and BFS/DFS over 4-neighbors marking reachable land. Each land cell visited once and each adjacency checked constant times. Runtime $O(nm)$, space $O(nm)$ worst-case queue/recursion.
-}
-
-\workedq{P75}{Redundant connection / first edge creating an undirected cycle.}{
-Initialize DSU. For each edge $(u,v)$ in order: if find$(u)=$find$(v)$, this edge closes a cycle, return it; otherwise union. Correct because DSU tracks connectivity in graph built by previous edges. Runtime $O(E\alpha(V))$.
-}
-
-\workedq{P76}{Top-$k$ frequent elements: frequency map plus heap/buckets.}{
-Count occurrences with HashMap. Heap version: push $(freq,key)$ into max-heap and pop $k$, $O(n+m\log m)$. Bucket version: array buckets by frequency $0..n$, append keys to bucket[f], scan buckets downward until $k$ keys, $O(n+m)$.
-}
-
-\workedq{P77}{Sliding window with all elements distinct: longest substring/subarray no repeats.}{
-Maintain left pointer $l$ and map last position. For each right $r$, if $A[r]$ last seen at $p\ge l$, set $l=p+1$. Update last and answer $r-l+1$. Invariant: window $[l,r]$ has no duplicates and is the longest valid window ending at $r$. Runtime $O(n)$ expected.
-}
-
-\workedq{P78}{K sorted lists / merge streams with priority queue.}{
-Push first element of each list with list id into min-heap. Repeatedly pop smallest, output it, then push next element from same list. Heap size at most $k$, each element pushed/popped once. Runtime $O(N\log k)$, space $O(k)$.
+Independent nonnegative X[i], known distributions. Let M=max\_i X[i], z=E[M], threshold tau=z/2. Accept first X[i]>=tau. Guarantee E[ALG]>=z/2. Proof uses q=P[all i: X[i]<tau] and overshoots (X[i]-tau)\^{}+; threshold contribution tau(1-q) plus overshoot contribution q*sum\_i E[(X[i]-tau)\^{}+].
 }
 
 
+\subsectiontitle{Standard / LeetCode Micro-Stencils}
+\microq{Two Sum}{scan i left->right; map has earlier values j<i. If target-a[i] exists return; else insert. Inv: when second endpoint appears, first is stored. Exp O(n).}
+\microq{Valid parentheses}{stack unmatched opens; closing bracket must match top; accept iff stack empty. Inv: stack = opens not yet closed, in order. O(n).}
+\microq{Grid islands}{for each unvisited land cell: count++, BFS/DFS 4-neighbors. Each cell/edge checked O(1) times. O(nm).}
+\microq{Redundant connection}{DSU scan edges in input order; if find(u)==find(v), current edge closes first cycle; else union. O(E alpha V).}
+\microq{Top-k frequent}{count HashMap. Heap: O(n+m log m), pop k. Bucket by freq 0..n: append to bucket[f], scan downward => O(n+m).}
+\microq{Distinct sliding window}{l=0; last map. For r: if last[a[r]]>=l set l=last+1; update ans=r-l+1. Inv: window [l,r] duplicate-free and longest ending at r. Exp O(n).}
+\microq{K sorted lists}{min-heap first element of each list; pop smallest, push next from same list. N elems, heap size k => O(N log k), space O(k).}
+\microq{Max subarray}{D\&C: left/right/cross(best suffix+prefix), T=2T(n/2)+O(n). Kadane: cur=max(a[i],cur+a[i]); best=max(best,cur). O(n).}
+\microq{Count inversions}{merge sort; when R[j] copied before L[i..], add remaining left count. Correct because those are exactly cross inversions. O(n log n).}
+\microq{Merge stability proof}{merge inv: output prefix sorted and contains smallest consumed elems. Tie -> take left first, preserving original order.}
+\microq{Quickselect}{random pivot; recurse only into side containing kth. Good pivot shrinks to <=3n/4 with const prob => expected O(n).}
+\microq{BFS proof}{queue nondecreasing dist. If shorter path to v existed, predecessor on shorter path processed earlier and would have discovered v.}
+\microq{Multi-source BFS}{push all sources with dist=0. Same as super-source to all sources. First pop gives nearest-source distance. O(V+E).}
+\microq{DFS/topo/cycle}{directed edge to GRAY ancestor = cycle. If no back edge, decreasing finish times topo-sort since every edge u->v has f[u]>f[v].}
+\microq{Undirected cycle}{DFS: visited neighbor != parent => cycle. DSU: edge inside same component closes cycle.}
+\microq{SCC condensation}{components as nodes; cross-component edges form DAG. A cycle of components would merge into one SCC. Use topo DP on condensation.}
+\microq{Kruskal ties}{equal-weight tie order may change tree, not weight. Accepted edge still lightest crossing a component cut, so safe.}
+\microq{Second-best MST}{for each non-tree e=(u,v), add e to T, remove max-weight edge on T-path u..v. Candidate w(T)+w(e)-maxpath. Min candidate >w(T). Naive O(EV).}
+\microq{Min cut from maxflow}{final residual BFS from s gives S. Cut edges u in S, v notin S. Crossing S->T saturated and T->S zero, so cap=cut=value.}
+\microq{Project selection}{profit p\_v, dependency u=>v. s->v cap p\_v if p\_v>0; v->t cap -p\_v if p\_v<0; u->v cap INF. Max profit = positiveSum - mincut.}
+\microq{Interval partitioning}{sort by start; min-heap room finish times. If minFinish<=s reuse else new room. Max heap size = max overlap = optimum. O(n log n).}
+\microq{Sweep max overlap}{events (start,+1),(end,-1); for half-open [s,e), process end before start at tie. Running max active = overlap.}
+\microq{LRU data struct}{HashMap key->DLL node; list by recency. Get/move front. Put/update front; evict tail. Exp O(1).}
+\microq{LFU data struct}{key->(val,freq,node), freq->DLL, minFreq. On access move key f->f+1; evict LRU node in minFreq list. Exp O(1).}
+\microq{LRU vs LFU}{neither dominates pointwise. LFU can keep old frequent page; LRU can evict frequent page after long scan. Course fact: LRU k-competitive.}
+\microq{Anagrams}{key = sorted chars or frequency vector. Same multiset iff same key. HashMap key->group. O(sum L log L) or O(sum L) fixed alphabet.}
+\microq{Valid anagram}{same length and all char counts equal; count first, subtract second, reject negative/nonzero. O(n).}
+\microq{House robber path}{dp0=0, dp1=a1, dp[i]=max(dp[i-1], a[i]+dp[i-2]). Choice: skip/take i. O(n), O(1) space.}
+\microq{Tree independent set}{postorder returns (take,skip). take(u)=w\_u+sum skip(ch); skip(u)=sum max(take,skip). Ans max at root.}
+\microq{Word break}{dp[0]=true; dp[i]=OR\_{j<i}(dp[j] and s[j..i] in Dict). Ans dp[n]. O(n2) checks plus substring cost.}
+\microq{Edit distance}{dp[i][j]=min edits A[1..i]->B[1..j]. Base dp[i][0]=i, dp[0][j]=j. Equal -> diag; else 1+min(del,ins,rep). O(nm).}
+\microq{SP with <=K edges}{layered BF: dp[l][v]=best with <=l edges. Init dp[0][s]=0. For l=1..K relax all edges from dp[l-1]. O(KE).}
+\microq{SP with one discount/free edge}{state (v,used). Normal edge keeps used; discount transition only from used=0 to used=1. Run Dijkstra if costs nonnegative.}
+\microq{BST select kth}{L=size(left). If k=L+1 return root; if k<=L go left; else go right with k-L-1. O(h).}
+\microq{Validate BST}{valid(x,lo,hi): require lo < x.key < hi, recurse left (lo,x), right (x,hi); adapt duplicate convention. O(n).}
+\microq{DAG count paths}{topo; ways[s]=1; for u in order, for edge u->v: ways[v]+=ways[u]. All preds processed before v. O(V+E).}
+\microq{Prefix sums}{pref[0]=0; pref[i+1]=pref[i]+a[i]. Range sum [l,r)=pref[r]-pref[l]. Use for fast interval cost in DP.}
+\microq{Binary-search answer}{choose feasible(M), prove monotone and exact. Maintain smallest feasible in [L,R]. If feasible(mid) R=mid else L=mid+1.}
 
-\workedq{P79}{Maximum subarray: D\&C crossing case or Kadane linear DP.}{
-D\&C: best subarray is in left half, right half, or crosses mid. Crossing = best suffix of left + best prefix of right, found by scans. $T(n)=2T(n/2)+O(n)=O(n\log n)$. Kadane: $\text{bestEnd}[i]=\max(A_i,\text{bestEnd}[i-1]+A_i)$, answer $\max_i \text{bestEnd}[i]$, O(n).
+
+{%\fontsize{2.24}{2.27}\selectfont
+\subsectiontitle{More Standard Problem Micro-Stencils}
+\microq{Merge intervals}{Sort by start. Keep last output [l,r]. If next.s<=r (closed/touching convention) merge r=max(r,next.e), else output new interval. O(n log n).}
+\microq{Remove overlaps}{Max keep = interval scheduling by earliest finish. Min removals = n-kept. Proof: earliest finish leaves largest remaining suffix.}
+\microq{Interval stabbing / arrows}{Sort by end. Place point/arrow at end of first uncovered interval; delete all intervals containing it. Exchange: move OPT's first point to that end.}
+\microq{Meeting rooms possible}{Sort by start; conflict iff some next.start < current.end (for half-open [s,e), equality OK). Equivalent max overlap<=1.}
+\microq{Two-pointer sorted sum}{Sorted A. l=0,r=n-1. If A[l]+A[r]<T increase l; if >T decrease r; else found. Monotonicity proves discarded pair impossible.}
+\microq{3Sum}{Sort. Fix i; two-pointer l=i+1,r=n-1 for target -A[i]. Skip duplicate i/l/r values. Runtime O(n\^{}2).}
+\microq{Subarray sum K}{Prefix p. Count previous prefixes equal p-K in HashMap. Add count before inserting current p. Works with negative numbers. O(n) expected.}
+\microq{Positive window target}{If all numbers positive/nonnegative, expanding r increases sum and moving l decreases it; two pointers can find/count target or <=K windows. Not valid with negatives.}
+\microq{Sliding-window max}{Deque of indices with decreasing values. Drop out-of-window front; while back value <= new value pop back; front is max. Each index enters/exits once => O(n).}
+\microq{Median maintenance}{Max-heap lower half, min-heap upper half. Rebalance sizes differ by <=1 and all lower<=upper. Median is root(s). Insert O(log n).}
+\microq{Kth largest stream}{Min-heap size k. For each x push; if size>k pop min. Heap root is kth largest of seen items. O(n log k), space O(k).}
+\microq{2D prefix sums}{P[i+1][j+1]=A[i][j]+P[i][j+1]+P[i+1][j]-P[i][j]. Rect [r1,r2)x[c1,c2): four-corner inclusion-exclusion.}
+\microq{Difference array}{For range add x on [l,r): diff[l]+=x, diff[r]-=x. Prefix diff to materialize final array. 2D uses four corner updates.}
+\microq{Trie / prefix tree}{Edges are characters. insert/search/startsWith are O(word length). Useful for prefix dictionaries; terminal flag distinguishes word vs prefix.}
+\microq{Kahn topo-sort}{Compute indegrees; queue all indeg-0 vertices; pop u and decrement outgoing neighbors. If output size<V, cycle exists. O(V+E).}
+\microq{Alien dictionary}{For adjacent words, first differing chars give edge a->b. If longer word appears before its exact prefix, invalid. Then topo-sort characters.}
+\microq{Word ladder BFS}{Vertices are words; edges connect words differing in one char. BFS gives min transformations. Wildcard buckets h*t, *ot reduce neighbor generation.}
+\microq{0-1 BFS}{For edge weights 0/1, use deque. Relax 0-edge with push\_front, 1-edge with push\_back. Distances processed nondecreasingly. O(V+E).}
+\microq{Critical path DAG}{Tasks with durations and prerequisites: topo order; earliestFinish[v]=dur[v]+max earliestFinish[pred]. Project time=max EF. Cycle => impossible.}
+\microq{Tree centers / min height roots}{Repeatedly remove all leaves, decreasing degrees. Remaining 1 or 2 vertices are centers minimizing maximum distance to all nodes. O(n).}
+\microq{Tree diameter 2 BFS}{In a tree: BFS/DFS from any node gives farthest a; BFS/DFS from a gives farthest b. Path a-b is a diameter. O(n).}
+\microq{LCA binary tree}{Postorder: if node is p/q return node. Let L,R recurse. If both non-null return node; else return non-null child result. O(n).}
+\microq{LCA in BST}{If p,q both < root go left; both > root go right; otherwise root is split point and LCA. Runtime O(h).}
+\microq{Euler trail undirected}{Ignoring isolated vertices, graph must be connected. Euler circuit iff all degrees even. Euler trail iff exactly 0 or 2 odd-degree vertices.}
+\microq{2-SAT via SCC}{Clause (a OR b) becomes implications !a->b and !b->a. Satisfiable iff no variable x has x and !x in same SCC.}
+\microq{Huffman coding}{Repeatedly merge two smallest frequencies. Greedy proof: two least frequent symbols can be deepest siblings in some optimum. O(n log n).}
+\microq{Fractional knapsack}{Sort by value/weight decreasing, take greedily, last item possibly fractional. Exchange proof by replacing lower density with higher density. 0/1 differs.}
+\microq{Deadline jobs profit}{Unit jobs with deadline/profit: sort profit descending, schedule each in latest free slot <=deadline (DSU for slots). Greedy keeps high profit.}
+\microq{Gas station circle}{If total gas<total cost no start. Else scan tank; when tank<0, no station in current segment can start, so next index becomes candidate.}
+\microq{Monotonic stack}{Next greater element: keep stack decreasing. While top < x, x is next greater for popped indices. Push x. Each element popped once => O(n).}
 }
 
-\workedq{P80}{Count inversions by merge sort.}{
-Split array, count inversions in left/right recursively. During merge, when right element $R[j]$ is copied before remaining left elements $L[i..]$, add $|L|-i+1$ inversions. Merge still sorted. Runtime $T(n)=2T(n/2)+O(n)=O(n\log n)$.
-}
 
-\workedq{P81}{Merge sort correctness and stability.}{
-Induct on length. Recursive calls sort both halves. Merge invariant: output prefix is sorted and contains the smallest already-consumed elements from both halves. If ties choose left element first, stable order is preserved. Runtime $O(n\log n)$, space $O(n)$.
-}
 
-\workedq{P82}{Quickselect / randomized selection: kth smallest expected linear.}{
-Partition around random pivot. If pivot rank $r=k$ return; if $k<r$ recurse left; else recurse right with $k-r$. Expected recurrence $E[T(n)]\le E[T(\text{random side})]+O(n)=O(n)$; good pivots shrink to at most $3n/4$ with constant probability.
-}
+{%\fontsize{2.14}{2.16}\selectfont
+\subsectiontitle{Extra Exam Trap Micro-Stencils}
+\microq{Growth order}{log n < log(n!)=Theta(n log n) < n log n < n2 < n3 < 2n < 3n < n! < nn. Also log\^{}k n=o(n\^{}eps), n\^{}k=o(c\^{}n).}
+\microq{Weird growth}{(log n)\^{}(log n)=n\^{}(log log n): super-polynomial, sub-exponential. n\^{}(sqrt n)=e\^{}(sqrt n log n) < c\^{}n but > n\^{}k.}
+\microq{Factorial estimate}{Stirling: n!=(Theta(sqrt n))(n/e)\^{}n. For MCQ usually enough: log(n!)=sum log i=Theta(n log n).}
+\microq{Recurrence T(n-1)}{T(n)=T(n-1)+f(n) => sum f. T(n)=aT(n-1)+1 with a>1 => Theta(a\^{}n).}
+\microq{Recurrence sqrt}{T(n)=aT(sqrt n)+f(n). Put m=log n, S(m)=aS(m/2)+f(2\^{}m). Example T(n)=4T(n\^{}(1/4))+log n => S(m)=4S(m/4)+m=Theta(m log m).}
+\microq{Unequal split AB}{T(n)=sum a\_i T(b\_i n)+Theta(n\^{}d). Find p with sum a\_i b\_i\^{}p=1. p>d => Theta(n\^{}p); p=d => Theta(n\^{}p log n); p<d => Theta(n\^{}d).}
+\microq{AB examples}{T(n)=T(n/3)+T(n/2)+n: p<1, answer Theta(n). If alpha\^{}d+beta\^{}d=1 and work n\^{}d, answer Theta(n\^{}d log n).}
+\microq{Strengthening recipe}{If substitution gives target + bad lower term, prove stronger upper T(n)<=main-lowerTerm. LowerTerm must create slack under recursive shrink.}
+\microq{Master trap}{Master only for aT(n/b)+f(n), fixed a,b. Not for T(n-1), T(sqrt n), unequal splits unless transformed/AB.}
+\microq{Asymptotic proof}{To show f=O(g): find c,n0. To show Omega: find c,n0 lower. Theta = both. For sums, dominant term wins if positive.}
+\microq{Stack trace}{Push in array order then pop gives reversed order. Queue enqueue then dequeue gives same order. Underflow only if pop/dequeue empty.}
+\microq{Heap indices}{1-index: parent=floor(i/2), left=2i, right=2i+1. 0-index: parent=(i-1)/2, left=2i+1, right=2i+2.}
+\microq{Heap trace}{BuildHeap calls Heapify from floor(n/2) downto 1. In max-heap, root is max; heapsort swaps root with end, shrinks heap, so final array ascending.}
+\microq{Stable/in-place MCQ}{Insertion stable/in-place. Merge stable/not in-place. Heap in-place/not stable. Random quicksort in-place-ish/not stable, expected n log n, worst n2.}
+\microq{Comparison sort lower}{Only comparison sorts have Omega(n log n) lower bound. Counting/radix can beat it using key structure.}
+\microq{Binary lower bound}{lower-bound returns first i with A[i]>=x. Inv: answer in [l,r]. If A[mid]>=x then r=mid else l=mid+1.}
+\microq{Binary upper bound}{upper-bound returns first i with A[i]>x. Count <=x is upper\_bound(x); count <x is lower\_bound(x).}
+\microq{Floor/ceil search}{floor x = last <=x = upper\_bound(x)-1. ceil x = first >=x = lower\_bound(x). Check sentinel when index outside array.}
+\microq{BST height MCQ}{Any binary tree with n nodes has height at least floor(log2 n). A BST can be height n-1. Search worst O(h).}
+\microq{BST duplicates}{State convention. If left < root and right >= root, validation interval should be (lo,key) on left and [key,hi) or adapted on right.}
+\microq{Adjacency matrix/list}{List space Theta(V+E), scan neighbors O(deg). Matrix space Theta(V2), edge lookup O(1), scanning neighbors O(V).}
+\microq{Transpose graph}{For directed G, build G\^{}T by reversing every edge in adjacency lists. Runtime Theta(V+E). Used in Kosaraju.}
+\microq{Connected components}{Undirected: run BFS/DFS from every unvisited vertex; each search outputs one component. Runtime Theta(V+E).}
+\microq{Tree tests}{Undirected graph is tree iff connected and E=V-1 iff acyclic and E=V-1 iff connected and acyclic. Forest with c comps has E=V-c.}
+\microq{Bipartite test}{BFS color by parity distance. If edge joins same color => not bipartite; else partition is bipartition. Runtime Theta(V+E).}
+\microq{DAG facts}{Every nonempty DAG has a source and sink. Repeatedly removing sources gives topo order. Directed cycle means no topo order.}
+\microq{Topo uniqueness}{Topo order is unique iff every consecutive pair in the produced order has an edge between them in that direction. Otherwise swap adjacent incomparable vertices.}
+\microq{DFS edge classes}{Directed DFS: tree, back(to gray ancestor), forward(to descendant), cross(other). Undirected DFS has only tree/back edges.}
+\microq{SCC condensation DP}{Condense SCCs to DAG. To solve reachability/order DP between components, solve on condensation, not original cycles.}
+\microq{MST distinct weights}{If all edge weights are distinct, MST is unique. Proof: if two MSTs differ, take lightest edge in symmetric difference and use cut/cycle exchange.}
+\microq{MST equal weights}{Equal weights may give multiple MSTs, but Kruskal/Prim still return an MST. Tie-breaking changes tree, not optimum weight.}
+\microq{MST negative weights}{Negative edges are fine; cut/cycle properties do not require nonnegative weights. Kruskal still works.}
+\microq{MST vs SPT}{MST minimizes total tree weight; shortest-path tree preserves distances from source. Neither implies the other.}
+\microq{MST transform}{Add constant c to every edge: MST unchanged because every spanning tree has V-1 edges. Multiply by positive c: unchanged. Negative multiply turns min into max.}
+\microq{Bottleneck tree}{Every MST is a minimum-bottleneck spanning tree: its largest edge weight is as small as possible. Converse need not hold.}
+\microq{Bridge/cycle MST}{Every bridge is in every spanning tree/MST. A heaviest edge can still be in MST if it is a bridge; cycle property only applies to cycles.}
+\microq{Dijkstra zeros}{Zero-weight edges OK. Negative edges not OK because finalized vertex might later improve.}
+\microq{Unreachable vertices}{BFS/Dijkstra/BF leave d=INF and parent=NIL. Do not claim negative cycle affects answer unless reachable from source.}
+\microq{BF any negative cycle}{To detect any negative cycle anywhere, add super-source s to every vertex with weight 0, then run Bellman-Ford.}
+\microq{Difference constraints}{Constraint x\_v <= x\_u + w(u,v) becomes edge u->v weight w. Feasible iff no negative cycle. Distances from super-source give solution.}
+\microq{Arbitrage}{Exchange rates r(u,v). Product cycle >1 iff sum of weights -log r(u,v) on cycle <0. Detect with Bellman-Ford.}
+\microq{Shortest cycle through edge}{For directed edge e=(u,v), shortest cycle using e = w(e)+shortest path v->u after removing/allowing e carefully.}
+\microq{Number of shortest paths}{During BFS/Dijkstra: if better dist, set count=count[u]; if equal dist, add count[u]. Need process in nondecreasing dist.}
+\microq{Even/odd path}{Duplicate states (v,parity). Edge toggles parity. BFS/Dijkstra on product graph; answer dist[(t,desiredParity)].}
+\microq{Mod-state shortest path}{For path length/cost mod k, use states (v,r). Edge updates r. Then run BFS/Dijkstra depending on weights.}
+\microq{One special edge/state}{If one coupon/free/expensive action allowed, states (v,used). Normal transitions keep used; special transition flips 0->1.}
+\microq{Path reconstruction}{Store parent when relaxing/discovering. Reconstruct by following parent from target to source and reversing. For DP store argmin choice.}
+\microq{Residual edge meaning}{Forward residual cap = unused capacity. Backward residual cap = current flow that can be canceled. Augmenting may undo earlier choices.}
+\microq{Augment bottleneck}{Path push amount = min residual capacity on path. At least one edge becomes saturated, but later back edges can unsaturate it.}
+\microq{Undirected capacity}{For undirected edge capacity c, common reduction uses two opposite arcs cap c; opposite flows can be canceled to respect net capacity. For edge-disjoint, use a single cap-1 gadget.}
+\microq{Min edge cut}{Set every edge capacity 1. Min s-t cut value = minimum number of edges whose removal separates s,t.}
+\microq{Min vertex cut}{Split each nonterminal v into vin->vout cap 1, original edges go out->in with INF. Min cut value = min internal vertices to remove.}
+\microq{Interval DP shape}{If answer for interval [i,j] depends on choosing split/root k inside, states are intervals, fill by increasing length. Runtime often O(n3).}
+\microq{Grid DP shape}{If moves only right/down/up-diag in acyclic direction, dp[cell]=best over predecessor cells. Fill in topological coordinate order.}
+\microq{Exact-k DP}{Add dimension k. dp[i][k]=best using prefix/items with exactly k choices. For at most k, answer max over <=k or carry skip transitions.}
+\microq{Feasibility DP}{Boolean dp means possible, transition OR. Optimization dp means best value, transition min/max. Do not mix proof language.}
+\microq{Subset sum}{dp[x]=possible sum x. For each item w, update x decreasing: dp[x]|=dp[x-w]. Decreasing prevents using item twice.}
+\microq{Unbounded loop order}{Unbounded coin/rod: update amount increasing so same item can be reused. 0/1: capacity decreasing.}
+\microq{Substring vs subsequence}{Substring must be contiguous: if chars equal dp[i][j]=dp[i-1][j-1]+1 else 0. Subsequence uses max(skip left, skip right).}
+\microq{DP with sorted choices}{Sort by natural endpoint/time/value first. Then predecessor p(i) via binary search or two pointers; recurrence usually take/skip.}
+\microq{Solution reconstruction DP}{When taking max/min, store arg choice. After table filled, walk choices backward/recursively to output selected objects.}
+\microq{Pseudo-polynomial}{O(nW) is polynomial in numeric value W, not in input bitlength log W. Say pseudo-polynomial if weights are input numbers.}
+\microq{Greedy fail signal}{If choices have weights/profits interacting with future capacity, suspect DP not greedy. Example: 0/1 knapsack not ratio-greedy.}
+\microq{Interval scheduling proof}{Earliest finishing interval is safe: replace first interval of any optimal solution by it; leaves at least as much room for the rest.}
+\microq{Sweep tie rules}{For half-open [s,e), process end before start at same coordinate. For closed intervals, process start before end if touching counts as overlap.}
+\microq{Binary answer bounds}{Pick L definitely infeasible or minimal possible, R definitely feasible or maximal possible. State why bounds contain optimum.}
+\microq{Monotone predicate}{Minimize maximum: if M feasible, larger M feasible. Maximize minimum: if M feasible, smaller M feasible. Adjust binary search direction.}
+\microq{Random indicators}{Linearity of expectation does not require independence. Define indicator for each local event, compute its probability, sum.}
+\microq{Union bound}{P(any bad event) <= sum P(bad\_i). Combine with expectation: P[X>=1] <= E[X].}
+\microq{Markov}{For nonnegative X: P[X>=a] <= E[X]/a. Useful to turn expected bad count into existence/high-prob bound.}
+\microq{Pairwise independence}{For expected collision count, pairwise independence/universal hashing is enough; no need full independence over all keys.}
+\microq{Randomized worst case}{Randomized quicksort has expected O(n log n), but a particular unlucky pivot sequence still gives O(n2). Expected != worst-case.}
+\microq{Online ratio form}{For minimization, ALG(I) <= r OPT(I)+c where c independent of input length. For maximization, usually ALG >= OPT/r - c.}
+\microq{Adversary lower bound}{To prove no online alg beats r, adaptively choose continuation after seeing ALG action; compare ALG cost/value with offline OPT on same sequence.}
+\microq{Index convention}{Before writing recurrence, define whether intervals are [i,j], [i,j), or prefix first i items. Most off-by-one errors come from this.}
+\microq{Travel pass endpoint}{Pass of length L bought on day d covers integer days d..d+L-1. Previous uncovered day must be < d, or next index has day > d+L-1.}
+\microq{INF choice}{For reductions, INF can be any number larger than max possible finite objective/cut, e.g. sum of all finite capacities+1.}
+\microq{Certificate habit}{For optimization, mention certificate: MST edges total weight, shortest-path distances+parents, maxflow+mincut, DP table+choices.}
+\microq{Runtime habit}{State graph size after reduction. If time-expanded/layered graph has T layers, multiply V,E by T before applying BFS/Dijkstra/flow.}
+\microq{Proof ending}{Always finish: algorithm returns feasible solution; by lemma/invariant no better solution exists; hence optimal. Then runtime.}
 
-\workedq{P83}{BFS unweighted shortest paths: distance labels are exact.}{
-Queue processes vertices by nondecreasing distance. When discovering $v$ from $u$, set $d[v]=d[u]+1$. Any shorter path to $v$ has predecessor at smaller distance, which would be processed earlier and would have discovered $v$ earlier. Hence BFS distances are shortest edge counts.
 }
-
-\workedq{P84}{Multi-source BFS: nearest source / simultaneous spread.}{
-Initialize queue with all sources at distance 0. Then run ordinary BFS. Equivalent to adding super-source connected to all sources by 0/1 edges. First time a vertex is popped gives minimum distance to any source. Runtime $O(V+E)$.
-}
-
-\workedq{P85}{DFS cycle detection and topological order.}{
-Use colors WHITE/GRAY/BLACK. In directed graph, edge to GRAY ancestor is a back edge and proves a cycle. If no back edges, graph is DAG. Decreasing finish times give topological order because for every edge $u\to v$, DFS implies $f[u]>f[v]$.
-}
-
-\workedq{P86}{Undirected cycle detection with DFS/DSU.}{
-DFS: when exploring edge $(u,v)$, if $v$ already visited and $v\ne parent[u]$, cycle exists. DSU online: for each undirected edge, if endpoints already have same representative, edge closes a cycle; otherwise union. Runtime $O(V+E)$ or $O(E\alpha V)$.
-}
-
-\workedq{P87}{SCC condensation graph: reduce directed graph to a DAG.}{
-Compute SCC ids. Build condensation nodes = components, edge $C\to D$ if original edge crosses components. It is a DAG: a directed cycle among components would imply all those components are mutually reachable and should be one SCC. Use topo DP on condensation for reachability/path tasks.
-}
-
-\workedq{P88}{Kruskal trace with equal weights: when ties change MST but not weight.}{
-Sort edges by nondecreasing weight; scan. Accept edge iff endpoints currently in different DSU components. With equal weights, different tie orders may produce different MSTs. Cut property still safe because accepted edge is lightest crossing some component cut.
-}
-
-\workedq{P89}{Second-best MST / replacement edge idea.}{
-Compute MST $T$. For each non-tree edge $e=(u,v)$, adding $e$ creates cycle. To get a spanning tree, remove the maximum-weight edge $f$ on path $u\leadsto v$ in $T$. Candidate weight $w(T)+w(e)-w(f)$. Minimum candidate strictly larger than $w(T)$ is second-best. Naive $O(EV)$.
-}
-
-\workedq{P90}{Max-flow optimality certificate and min-cut extraction.}{
-After Ford-Fulkerson/Edmonds-Karp terminates, let $S$ be vertices reachable from $s$ in residual graph. No residual edge leaves $S$, so crossing edges $S\to T$ are saturated and $T\to S$ carry zero. Thus $|f|=c(S,T)$. Since every flow $\le$ every cut, both are optimal.
-}
-
-\workedq{P91}{Minimum $s$-$t$ cut from max-flow result.}{
-Run maxflow. In final residual graph, DFS/BFS from $s$ using positive residual capacity. Let reachable set be $S$. Return cut edges $(u,v)$ with $u\in S$, $v\notin S$. Capacity equals maxflow value by max-flow min-cut theorem.
-}
-
-\workedq{P92}{Project selection / maximum closure as min-cut.}{
-Profit $p_v$ can be positive/negative; dependencies $u$ chosen $\Rightarrow v$ chosen. Add $s\to v$ cap $p_v$ if positive, $v\to t$ cap $-p_v$ if negative, dependency edge $u\to v$ cap INF. Min cut chooses profitable closed set; max profit = total positive profit $-$ mincut.
-}
-
-\workedq{P93}{Interval partitioning / minimum number of rooms.}{
-Sort intervals by start time. Maintain min-heap of room finish times. For interval $(s,f)$, if min finish $\le s$, reuse that room by pop then push $f$; else allocate new room and push $f$. Max heap size = max overlap = optimal number of rooms. Runtime $O(n\log n)$.
-}
-
-\workedq{P94}{Sweep line: maximum overlap of intervals.}{
-Create events $(start,+1),(end,-1)$; sort by coordinate. For half-open intervals $[s,e)$ process end before start at same coordinate. Running sum gives active count; maximum is max overlap/min rooms. Runtime $O(n\log n)$.
-}
-
-\workedq{P95}{LRU cache data structure in $O(1)$ expected time.}{
-Use HashMap key$\to$node in doubly linked list ordered by recency. Get: if key present, move node to front. Put: update/move if present; else insert front and evict tail if over capacity. HashMap gives lookup, list gives delete/insert known node in $O(1)$.
-}
-
-\workedq{P96}{LFU cache data structure idea in $O(1)$ expected time.}{
-Use key$\to$(value,freq,node), freq$\to$ doubly linked list of keys with that freq, and minFreq. Get/update: remove key from old freq list, increment freq, insert into new freq list; update minFreq if old list empty. Evict from minFreq list using LRU tie-break.
-}
-
-\workedq{P97}{LRU vs LFU MC trap: neither dominates pointwise.}{
-To disprove ``LRU always at most LFU misses'' or reverse, give one sequence where LFU keeps an old frequent page but misses recent working-set pages, and another where LRU evicts a frequently reused page after a scan. Course fact: LRU is $k$-competitive; LFU does not have that pointwise guarantee.
-}
-
-\workedq{P98}{Group anagrams: canonical key in hash map.}{
-For each word, compute key = sorted characters or 26-count vector. Push word into HashMap[key]. Correct because anagrams have identical character multiset iff keys equal. Runtime sorting-key $O(\sum L_i\log L_i)$ or count-key $O(\sum L_i)$ for fixed alphabet.
-}
-
-\workedq{P99}{Valid anagram / frequency equality.}{
-If lengths differ, false. Count characters of first string, subtract counts for second. Reject if any count negative / final nonzero. Correct because two strings are anagrams iff every character multiplicity agrees. Runtime $O(n)$ for fixed alphabet or expected $O(n)$ with hash map.
-}
-
-\workedq{P100}{House Robber path DP: choose non-adjacent items.}{
-$dp[i]=$ best value using first $i$ houses. Base $dp[0]=0$, $dp[1]=a_1$. Recurrence $dp[i]=\max(dp[i-1],a_i+dp[i-2])$. Correct: optimum either skips house $i$ or takes it and cannot take $i-1$. Runtime $O(n)$, space $O(1)$ with two variables.
-}
-
-\workedq{P101}{Tree House Robber / independent set on tree.}{
-Postorder returns pair $(take,skip)$. $take(u)=w_u+\sum_{child}skip(child)$. $skip(u)=\sum_{child}\max(take(child),skip(child))$. \ans $\max(take(root),skip(root))$. This is tree DP: parent-child adjacency is the only conflict.
-}
-
-\workedq{P102}{Word Break DP: segment string using dictionary.}{
-$dp[i]=$ whether prefix $s[0..i)$ can be segmented. $dp[0]=true$. $dp[i]=\bigvee_{j<i}(dp[j]\land s[j..i]\in Dict)$. \ans $dp[n]$. Runtime $O(n^2)$ dictionary checks, plus substring cost depending implementation.
-}
-
-\workedq{P103}{Edit distance DP: insert/delete/replace.}{
-$dp[i][j]=$ min edits from $A[1..i]$ to $B[1..j]$. Base $dp[i][0]=i$, $dp[0][j]=j$. If chars equal, $dp[i][j]=dp[i-1][j-1]$; else $1+\min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1])$. Runtime $O(nm)$.
-}
-
-\workedq{P104}{Shortest path with at most $K$ edges / flights with $K$ stops.}{
-Layered DP/Bellman-Ford. $dp[\ell][v]=$ shortest distance to $v$ using at most/exactly $\ell$ edges. Initialize $dp[0][s]=0$. Relax all edges for $\ell=1..K$: $dp[\ell][v]=\min(dp[\ell-1][v],\min_{u\to v}dp[\ell-1][u]+w(u,v))$. Runtime $O(KE)$.
-}
-
-\workedq{P105}{Shortest path with one discounted/free edge.}{
-State $(v,used)$ where $used\in\{0,1\}$. For each edge $u\to v$ weight $w$: normal transition $(u,used)\to(v,used)$ cost $w$; if $used=0$, discount transition $(u,0)\to(v,1)$ cost discounted weight. Run Dijkstra if all costs nonnegative. Runtime $O(E\log V)$ up to factor 2.
-}
-
-\workedq{P106}{Kth smallest in BST with subtree sizes.}{
-At node $x$, let $L=size(x.left)$. If $k=L+1$, return $x$. If $k\le L$, go left. Else go right with $k-L-1$. Runtime $O(h)$. This is rank/select dual to interval counting.
-}
-
-\workedq{P107}{Validate BST recursively with open intervals.}{
-Function valid(x,lo,hi): if null true; require $lo < x.key < hi$ (or adjust for duplicate convention); recurse left with $(lo,x.key)$ and right with $(x.key,hi)$. Correct because local parent checks alone do not catch deeper violations. Runtime $O(n)$.
-}
-
-\workedq{P108}{Topological DP for counting paths in a DAG.}{
-Topo sort. Initialize $ways[s]=1$. For vertices in topo order, for each edge $u\to v$, add $ways[u]$ to $ways[v]$. Correct because all paths to $v$ end with some predecessor processed earlier. Runtime $O(V+E)$.
-}
-
 \end{multicols*}
 
 \end{document}
