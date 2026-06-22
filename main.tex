@@ -3,7 +3,7 @@
 % Compile with LuaLaTeX or XeLaTeX (fontspec does not work with pdfLaTeX).
 % With latexmk use:  latexmk -lualatex -pvc main.tex
 
-\usepackage[margin=0.15cm, top=0.2cm, bottom=0.2cm]{geometry}
+\usepackage[margin=0.09cm, top=0.10cm, bottom=0.10cm]{geometry}
 \usepackage{fontspec}
 \usepackage{multicol}
 \usepackage{multicolrule}
@@ -18,7 +18,7 @@
 \tcbuselibrary{raster,listings,skins,breakable}
 
 \setlength{\columnseprule}{0.4pt}
-\setlength{\columnsep}{0.25cm}
+\setlength{\columnsep}{0.16cm}
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0pt}
@@ -32,13 +32,15 @@
 \IfFontExistsTF{\cheatsheetfont}{%
   \newfontfamily\bodyfont{\cheatsheetfont}%
 }{%
-  \newcommand\bodyfont{\color{red}\bfseries[FONT NOT INSTALLED: \cheatsheetfont]\color{black}\ }%
+  % Portable fallback for systems without Charter Bold.
+  \newfontfamily\bodyfont{Noto Serif Bold}%
 }
 
 \IfFontExistsTF{\codefontname}{%
   \newfontfamily\codefont{\codefontname}[Scale=0.85, Ligatures=TeXOff, Renderer=Basic]%
 }{%
-  \newcommand\codefont{\color{red}\bfseries[FONT NOT INSTALLED: \codefontname]\color{black}\ }%
+  % Portable fallback for systems without IBM Plex Mono.
+  \newfontfamily\codefont{Noto Sans Mono}[Scale=0.85, Ligatures=TeXOff, Renderer=Basic]%
 }
 
 % Islands Light (RustRover default light) syntax colors
@@ -73,7 +75,7 @@
 
 \lstset{
   language=RustIsland,
-  basicstyle=\codefont\color{rustText}\fontsize{3.65}{3.95}\selectfont,
+  basicstyle=\codefont\color{rustText}\fontsize{2.88}{2.98}\selectfont,
   keywordstyle=\color{rustKeyword},
   commentstyle=\color{rustComment}\itshape,
   stringstyle=\color{rustString},
@@ -86,6 +88,7 @@
   tabsize=2,
   columns=fullflexible,
   keepspaces=true,
+  lineskip=-0.40pt,
   xleftmargin=0pt,
   framexleftmargin=0pt,  
   aboveskip=0pt,
@@ -118,9 +121,9 @@
 \renewcommand{\textbf}[1]{\underline{#1}}
 
 % Type scale: body < subsection < section, all in Charter Bold
-\newcommand{\cheatsize}{\fontsize{4.35}{4.75}\selectfont}
-\newcommand{\subsectionsize}{\fontsize{5.5}{6.0}\selectfont}
-\newcommand{\sectionsize}{\fontsize{6.5}{7.0}\selectfont}
+\newcommand{\cheatsize}{\fontsize{3.28}{3.38}\selectfont}
+\newcommand{\subsectionsize}{\fontsize{3.92}{4.02}\selectfont}
+\newcommand{\sectionsize}{\fontsize{4.55}{4.65}\selectfont}
 
 % Title styling
 % Document title: centered, bold, no rule
@@ -132,27 +135,27 @@
 \newcounter{cheatsection}
 % Major section: thin horizontal rule above, bold title, tiny space below
 \newcommand{\sectiontitle}[1]{%
-  \par\vspace{0.01cm}%
-  \noindent{\rule{\linewidth}{0.4pt}}\par%
-  \vspace{0.01cm}%
+  \par\vspace{0pt}%
+  \noindent{\rule{\linewidth}{0.25pt}}\par%
+  \vspace{0pt}%
   \refstepcounter{cheatsection}%
   {\sectionsize\bfseries \arabic{cheatsection}.\ #1}\par%
-  \vspace{0.015cm}%
+  \vspace{0pt}%
 }
 
 \newcommand{\subsectiontitle}[1]{%
-  \par\vspace{0.012cm}%
+  \par\vspace{0pt}%
   {\subsectionsize\bfseries\itshape\textbf{#1}}\par%
-  \vspace{0.01cm}%
+  \vspace{0pt}%
 }
 % Proof bank: compact labeled proof cards, less wall-of-text than paragraphs
 \newcommand{\proofbanktitle}[1]{%
-  \par\vspace{0.018cm}%
+  \par\vspace{0pt}%
   {\subsectionsize\bfseries\itshape\color{rustKeyword} #1}\par%
-  \vspace{0.006cm}%
+  \vspace{0pt}%
 }
 \newcommand{\proofitem}[2]{%
-  \par\vspace{0.009cm}%
+  \par\vspace{0pt}%
   \noindent\hangindent=0.42cm\hangafter=1%
   {\bfseries\color{rustFunction} #1.}\hspace{0.055cm}#2\par%
 }
@@ -169,8 +172,8 @@
     raster width=\linewidth,
     raster columns=#1,
     raster equal height=none,
-    raster column skip=0.025cm,
-    raster row skip=0.025cm,
+    raster column skip=0.010cm,
+    raster row skip=0.006cm,
     raster left skip=0pt,
     raster right skip=0pt
   ]
@@ -219,11 +222,29 @@
 }
 \usepackage{array}
 
+% Worked exam problem cards and compact tags.
+\newcommand{\workedq}[3]{%
+  \par\vspace{0pt}%
+  \noindent{\color{rustKeyword}\bfseries #1. #2}\par\vspace{-0.006cm}%
+  \noindent\hangindent=0.22cm\hangafter=1 #3\par%
+}
+\newcommand{\wk}[1]{{\color{rustMacro}\bfseries #1}}
+\newcommand{\ans}{\wk{Ans:} }
+\newcommand{\inv}{\wk{Inv.:} }
+\newcommand{\init}{\wk{Init:} }
+\newcommand{\maint}{\wk{Maint:} }
+\newcommand{\term}{\wk{Term:} }
+
 
 \begin{document}
 \cheatsize
 \bodyfont
-\linespread{0.85}\selectfont
+\linespread{0.70}\selectfont
+\setlength{\tabcolsep}{1.0pt}
+\renewcommand{\arraystretch}{0.70}
+\setlength{\fboxsep}{0pt}
+\setlength{\fboxrule}{0pt}
+\sloppy
 \setlength{\abovedisplayskip}{0pt}
 \setlength{\belowdisplayskip}{0pt}
 \setlength{\abovedisplayshortskip}{0pt}
@@ -231,7 +252,7 @@
 \setlist[itemize]{nosep,topsep=0pt,parsep=0pt,partopsep=0pt,leftmargin=*,itemsep=0pt}
 
 \begin{multicols*}{4}
-\raggedcolumns
+\flushcolumns
 \SetMCRule{line-style=solid, extend-fill}
 
 \sectiontitle{Complexity Table / Fast Lookup}
@@ -241,11 +262,6 @@
 \hline
 Algorithm/Data Struct & Time & Space & Notes \\
 \hline
-Array access & $O(1)$ & - & contiguous \\
-Vec push & amortized $O(1)$ & - & resize doubles \\
-Linked list search & $O(n)$ & $O(n)$ & bad locality \\
-Stack push/pop & $O(1)$ & $O(n)$ & Vec \\
-Queue push/pop & $O(1)$ & $O(n)$ & VecDeque \\
 Hash search/insert/delete & expected $O(1)$, worst $O(n)$ & $O(n)$ & $\alpha$=n/m \\
 BST ops & $O(h)$ & $O(n)$ & h $\log n$ balanced, n worst \\
 Inorder BST & $\Theta(n)$ & $O(h)$ & sorted output \\
@@ -273,6 +289,7 @@ Rod cutting & $\Theta(n^2)$ & $\Theta(n)$ & DP \\
 Matrix chain & $\Theta(n^3)$ & $\Theta(n^2)$ & DP \\
 LCS & $\Theta(nm)$ & $\Theta(nm)$ & DP \\
 Knapsack 0/1 & $\Theta(nW)$ & $\Theta(nW)/\allowbreak \Theta(W)$ & pseudo-poly \\
+\hline
 Coin change & $\Theta(W\cdot \#\text{coins})$ & $\Theta(W)$ & unbounded \\
 \hline
 \end{tabular}%
@@ -288,7 +305,14 @@ Coin change & $\Theta(W\cdot \#\text{coins})$ & $\Theta(W)$ & unbounded \\
 \textbf{dependencies / precedence} & DAG + topological order \\
 \textbf{capacity / matching / disjoint paths} & max-flow reduction \\
 \textbf{expected count} & indicators + linearity \\
-\textbf{online unknown future} & competitive ratio vs OPT
+\textbf{online unknown future} & competitive ratio vs OPT \\
+\textbf{min max feasible value} & binary search answer + monotone feasible \\
+\textbf{mutual reachability forbidden} & SCC condensation / comp[u]=comp[v] \\
+\textbf{capacitated assignment} & max-flow with integral capacities \\
+\textbf{tree path/subtree optimum} & postorder DP: inside child / through root \\
+\textbf{tree traversals reconstruct} & inorder+post/pre split at root \\
+\textbf{time-dependent edges} & earliest-arrival Dijkstra/events \\
+\textbf{grid/assignment/paths} & bipartite matching / max-flow
 \end{tabular}
 
 \proofbanktitle{Exam Writeup Checklist}
@@ -311,6 +335,8 @@ Coin change & $\Theta(W\cdot \#\text{coins})$ & $\Theta(W)$ & unbounded \\
 
 \proofitem{DP}{State meaning. Base correct. Induct in fill order. Transition enumerates all valid first/last choices; dependencies already optimal. Optimal solution uses one enumerated choice; every candidate feasible. Therefore $dp[s]$ optimum. Write answer $=dp[\dots]$.}
 
+\proofitem{Parametric search}{Guess answer $M$. Build feasible$(M)$. Prove monotone: if $M$ works then any larger $M$ works (minimization). Binary search smallest feasible $M$. Correctness = binary search invariant + feasible predicate exact.}
+
 \proofitem{Greedy}{Safe choice: for optimum $O$ containing current partial solution, if chosen $e\notin O$, exchange $f\in O$ with $e$ without worsening. Then induct.}
 
 \proofbanktitle{Proof Bank: Sorting / Hash / DS}
@@ -326,8 +352,8 @@ Coin change & $\Theta(W\cdot \#\text{coins})$ & $\Theta(W)$ & unbounded \\
 
 \proofitem{Quicksort exp}{Pair compared at most once. $X_{ij}=1$ if ranks $i,j$ compared. Compare iff first pivot among ranks $i..j$ is $i$ or $j$, so $P(X_{ij})=2/(j-i+1)$. Sum $O(n\log n)$.}
 
-\proofitem{Hashing}{For key $x$, $X_y=1[h(y)=h(x)]$. Universal hashing: $E[X_y]\le1/m$. Expected collisions $\le n/m=\alpha$. Search $O(1+\alpha)$; if $m=\Theta(n)$ then expected $O(1)$.}
-
+\proofitem{Hashing}{Single key: for key $x$, $X_y=1[h(y)=h(x)]$. Universal hashing gives $E[X_y]\le1/m$, so expected chain collisions $\le(n-1)/m=\Theta(\alpha)$ and search $O(1+\alpha)$. Total collisions: $X=\sum_{i<j}X_{ij}$, $X_{ij}=1[h(x_i)=h(x_j)]$, hence $E[X]\le{n\choose2}/m=n(n-1)/(2m)=\Theta(n2/m)$. $k$-collision: $E[\#k\text{-collisions}]\le {n\choose k}/m^{k-1}$. Markov: $P[X\ge1]\le E[X]$.}
+\proofitem{Hash mini}{Length-$\ell$ keys: pair collision prob $1/m^\ell$, so $E[\#collisions]={n\choose2}/m^\ell$; if $m^\ell\ge{n\choose2}$ then $P[\exists collision]\le1$. Random $q$-color vertices: edge mono prob $1/q$, so $E[\#mono]=|E|/q$.}
 \proofitem{DSU}{Union by rank attaches smaller rank under larger. Rank increases only on equal-rank merge. Path compression preserves reps and shortens future paths. With both: $m$ ops in $O(m\alpha(n))$.}
 
 \proofbanktitle{Proof Bank: Graph Traversal}
@@ -338,6 +364,8 @@ Coin change & $\Theta(W\cdot \#\text{coins})$ & $\Theta(W)$ & unbounded \\
 \proofitem{DFS edge facts}{Parenthesis theorem: finish intervals disjoint or nested; nested iff descendant. White-path theorem: $v$ descendant of $u$ iff when $u$ discovered, there is a white path $u\leadsto v$.}
 
 \proofitem{SCC/Kosaraju}{Condensation graph is DAG. First DFS finish order puts source SCCs late. In reversed graph, DFS from highest finish cannot leave its SCC to an unvisited SCC. Each second-pass DFS outputs one SCC.}
+
+\proofitem{SCC reachability pairs}{$u\leadsto v$ and $v\leadsto u$ iff $comp[u]=comp[v]$. For forbidden pair $(u,v)$ reject iff same component. Correct because SCC is maximal mutual reachability. Runtime $O(V+E)$.}
 
 \proofitem{DAG SP/LP}{Topo order processes every predecessor before vertex. When processing $u$, $dist[u]$ already final over all paths ending at $u$; relaxing outgoing edges propagates optimum once. Runtime $\Theta(V+E)$.}
 
@@ -369,37 +397,25 @@ flow and cut are both optimal.}
 
 \proofitem{Bipartite matching flow}{Caps 1 force each left/right vertex used at most once. Integral capacities give integral max flow. Unit flow through $l\to r$ is matched pair; every matching gives same-size flow.}
 
+\proofitem{Cap assignment flow}{Build $s\to$ people cap 1, person$\to$ acceptable item cap 1, item$\to t$ cap capacity. Feasible iff maxflow = \#people. Integral flow = assignment; assignment = integral flow.}
+
+\proofitem{SP transform}{Multiplying every edge weight by $a>0$ preserves all shortest paths. Adding $a$ to every edge does not: paths with different number of edges get different extra cost.}
+
+\proofitem{Resource SP}{State graph $(v,b)$ where $b=$ used budget / remaining battery. Add transition only if resource feasible. Run BFS/Dijkstra depending on edge costs. Size $O(VB+EB)$. Correct since every feasible walk corresponds to one state path and vice versa.}
+\proofitem{2D sorted matrix}{Rows/cols sorted. Start top-right. If $A[i,j]>x$, move left; if $A[i,j]<x$, move down. Each step deletes one impossible row/col, so $O(n+m)$, $O(1)$.}
+\proofbanktitle{Proof Bank: Trees / Exam Reductions}
+\proofitem{Tree DP}{Postorder. Return height/best info from children. Best at $u$ is max(best in left, best in right, best crossing/using $u$). Induct on subtree: any optimal object either lies fully in one child or uses $u$.}
+
+\proofitem{Tree diameter}{Let $h(u)=1+\max(h_L,h_R)$, empty height $-1$. $diam(u)=\max(diam_L,diam_R,h_L+h_R+2)$. Path either inside one child or crosses through $u$.}
+\proofitem{Root path}{Longest simple path forced to pass through root: $h(root.left)+h(root.right)+2$ with empty height $-1$. Compute heights postorder in $O(n)$.}
+\proofitem{Tree rebuild}{Inorder+postorder: root=last(post); split inorder at root; subtree sizes split postorder; recurse. Preorder+inorder: root=first(pre). Pre+post alone not unique.}
+
+\proofitem{Unicyclic spanning trees}{Connected graph with $|E|=|V|$ has exactly one cycle $C$. Every spanning tree = delete exactly one edge of $C$. Deleting non-cycle edge disconnects; deleting cycle edge breaks only cycle. Hence \#spanning trees $=|C|$.}
+
+
 \proofbanktitle{Proof Bank: Online / Random}
-\proofitem{Ski rental}{Rent 1/day, buy $B$. Rent until paid $B$, then buy. If $T\le B$, ALG=$T$=OPT. If $T>B$, ALG$\le2B=2$OPT. Lower bound: adversary stops just before/after algorithm buys.}
 
-\proofitem{LRU paging}{
-Cache size $k$.
-
-Phase = requests containing $\le k$ distinct pages.
-
-New phase starts at request of $(k+1)$-st distinct page.
-
-LRU:
-$\le k$ misses/phase.
-
-Reason:
-requested page stays in cache until $k$ other distinct pages requested.
-
-OPT:
-$\ge1$ miss/completed phase.
-
-Reason:
-phase + first request next phase contains $k+1$ distinct pages;
-cache stores only $k$.
-
-Therefore
-
-LRU $\le k\cdot$OPT $+O(k)$
-
-$\Rightarrow$
-
-LRU is $k$-competitive.
-}
+\proofitem{LRU paging}{Cache size $k$. Phase has $\le k$ distinct pages; new phase begins at request of $(k+1)$-st distinct. LRU: $\le k$ misses/phase, because requested page survives until $k$ other distinct pages requested. OPT: $\ge1$ miss/completed phase, because phase + first request of next phase contains $k+1$ distinct pages but cache holds $k$. Thus LRU $\le k\cdot$OPT$+O(k)$; LRU is $k$-competitive.}
 \sectiontitle{Complexity / Asymptotics}
 
 $\log n \ll \sqrt n \ll n \ll n\log n \ll n^2 \ll n^3 \ll 2^n \ll n! \ll n^n$
@@ -415,45 +431,57 @@ $\sum_{i=1}^n i=\frac{n(n+1)}2=\Theta(n^2),\;
 \sum_{i\ge0}2^{-i}=2,\;
 \sum_{h\ge0}h2^{-h}=2$
 
-\textbf{Master Theorem:}
-\\
-$a/b^d < 1 \Rightarrow \Theta(n^d)$
-$a/b^d = 1 \Rightarrow \Theta(n^d \log n)$
-$a/b^d > 1 \Rightarrow \text{recurse dominates}$
-\\
-$T(n) = aT(n/b) + f(n)$
+\textbf{Master / recurrence solver:}
 
-$d = \log_b a$
+\textbf{Master:} $T(n)=aT(n/b)+f(n)$. Let $d=\log_b(a)$.
+Compare $f(n)$ with $n^d$.
 
-Case 1:
-$f(n) = O(n^{d-\varepsilon}) \implies T(n) = \Theta(n^d)$
-
-Case 2:
-$f(n) = \Theta(n^d \log^k n) \implies T(n) = \Theta(n^d \log^{k+1} n)$
-
-Case 3:
-$f(n) = \Omega(n^{d+\varepsilon}) \text{ and } a f(n/b) \le c f(n),\ c < 1 \implies T(n) = \Theta(f(n))$
-
-Akra--Bazzi mini-case:
-$T(n)=\alpha T(an)+\beta T(bn)+\Theta(n^d)$, find $p$ with $\alpha a^p+\beta b^p=1$.
-$p>d\Rightarrow\Theta(n^p)$, $p=d\Rightarrow\Theta(n^d\log n)$, $p<d\Rightarrow\Theta(n^d)$.
-Quick compare at $d$: if $\alpha a^d+\beta b^d<1$ then $
-\Theta(n^d)$; if $=1$ then $\Theta(n^d\log n)$; if $>1$ solve for $p$.
-
-\textbf{Common recurrences:}
-
-\begin{tabular}{@{}l l l@{}}
-Binary search      & $T(n)=T(n/2)+1$          & $\Theta(\log n)$ \\
-Merge sort         & $T(n)=2T(n/2)+n$         & $\Theta(n\log n)$ \\
-Max subarray D\&C  & $T(n)=2T(n/2)+n$         & $\Theta(n\log n)$ \\
-Naive matmul D\&C  & $T(n)=8T(n/2)+n^2$       & $\Theta(n^3)$ \\
-Strassen           & $T(n)=7T(n/2)+n^2$       & $\Theta(n^{\log_2 7})\approx\Theta(n^{2.807})$ \\
-Heapify            & $T(n)\le T(2n/3)+1$      & $O(\log n)$ \\
-Quicksort worst    & $T(n)=T(n-1)+n$          & $\Theta(n^2)$ \\
-Quicksort balanced & $T(n)=2T(n/2)+n$         & $\Theta(n\log n)$ \\
-Bellman-Ford       & $(V-1)E$ relaxations     & $\Theta(VE)$ \\
-BFS/DFS            & visit $V$, scan $E$      & $\Theta(V+E)$ \\
+\begin{tabular}{@{}ll@{}}
+$f$ smaller: $f=O(n^{d-\varepsilon})$ & $T=\Theta(n^d)$\\
+same: $f=\Theta(n^d \log^k n)$ & $T=\Theta(n^d \log^{k+1}n)$\\
+$f$ bigger: $f=\Omega(n^{d+\varepsilon})$ & $T=\Theta(f)$ if regularity\\
 \end{tabular}
+
+\textbf{Fast mental version if $f=n^k$:}
+\begin{tabular}{@{}lll@{}}
+$k<d$ & leaves win & $\Theta(n^d)$\\
+$k=d$ & tie/layers equal & $\Theta(n^d \log n)$\\
+$k>d$ & root/work wins & $\Theta(n^k)$\\
+\end{tabular}
+
+\textbf{Non-equal splits:} $T=\sum_i a_i T(b_i n)+\Theta(n^k)$.
+Find $p$ s.t. $\sum_i a_i b_i^p = 1$.
+\begin{tabular}{@{}lll@{}}
+$p>k$ & leaves win & $\Theta(n^p)$\\
+$p=k$ & tie & $\Theta(n^p \log n)$\\
+$p<k$ & root/work wins & $\Theta(n^k)$\\
+\end{tabular}
+
+\textbf{Trap:} if $\sum_i a_i b_i^p=1$, plain $cn^p$ proof has no slack;
+use $cn^p - d n^q$.
+\textbf{Akra--Bazzi mini:} $T(n)=\alpha T(an)+\beta T(bn)+\Theta(n^d)$. Find $p$: $\alpha a^p+\beta b^p=1$. Then $p>d\Rightarrow\Theta(n^p)$, $p=d\Rightarrow\Theta(n^d\log n)$, $p<d\Rightarrow\Theta(n^d)$.
+\textbf{Recurrences / runtimes:}
+{\codefont\fontsize{3.15}{3.25}\selectfont
+\begin{tabular}{@{}lll@{}}
+binsearch & $T=T(n/2)+1$ & $\Theta(\log n)$\\
+merge/maxsub & $T=2T(n/2)+n$ & $\Theta(n \log n)$\\
+naive mm & $T=8T(n/2)+n^2$ & $\Theta(n^3)$\\
+strassen & $T=7T(n/2)+n^2$ & $\Theta(n^{\log_2 7})$\\
+heapify & $T\le T(2n/3)+1$ & $O(\log n)$\\
+qsort worst & $T=T(n-1)+n$ & $\Theta(n^2)$\\
+qsort bal & $T=2T(n/2)+n$ & $\Theta(n \log n)$\\
+BF & $(V-1)E$ relax & $\Theta(V\cdot E)$\\
+BFS/DFS & visit $V$, scan $E$ & $\Theta(V+E)$
+\end{tabular}}
+
+\textbf{Master map:}
+\begin{tabular}{@{}ll@{}}
+$T(n/2)+1 \to \log n$ & $T(n/2)+n \to n$\\
+$2T(n/2)+1 \to n$ & $2T(n/2)+n \to n \log n$\\
+$3T(n/2)+n \to n^{\log_2 3}$ & $7T(n/2)+n^2 \to$ Strassen\\
+$8T(n/2)+n^2 \to n^3$ & $T(n-1)+n \to n^2$
+\end{tabular}
+
 \sectiontitle{Basic Data Structures}
 \subsectiontitle{Stack / Queue / Linked List}
 \begin{tabular}{@{}lll@{}}
@@ -469,18 +497,15 @@ Delete known node: reconnect `prev.next` and `next.prev`; finding node still $O(
 
 \textbf{Idea:} bucket $h(key)\bmod m$. \textbf{Collisions:} chaining / probing. \textbf{Load factor} $\alpha=n/m$.
 
-\[
-\begin{array}{@{}lll@{}}
-\text{insert} & \mathbb{E}[O(1)] & \text{worst }O(n)\\
-\text{search} & \mathbb{E}[O(1+\alpha)] & \text{worst }O(n)\\
-\text{delete} & \mathbb{E}[O(1)] & \text{worst }O(n)
-\end{array}
-\qquad
-m=\Theta(n)\Rightarrow \alpha=\Theta(1)
-\]
-
+Hash ops: insert/delete expected O(1), search expected O(1+alpha), all worst O(n); m=Theta(n) => alpha=Theta(1).
+\textbf{Expected total collisions:}
+$X=\sum_{i<j}X_{ij}$, where $X_{ij}=1[h(x_i)=h(x_j)]$.
+Universal hashing gives P[Xij=1]<=1/m, so E[X]=sum E[Xij] <= C(n,2)/m = n(n-1)/(2m)=Theta(n2/m).
+For one key: $\mathbb E[\#\text{collisions}]\le(n-1)/m=\Theta(\alpha)$, hence expected search $O(1+\alpha)$.
 \textbf{Traps:} HashMap/HashSet $O(1)$ is expected/amortized, not worst-case.
 Bad hashing / all collisions $\Rightarrow O(n)$.
+
+\textbf{k-collision stencil:} $X_S=1$ if fixed $k$-set collides. $P[X_S=1]\le1/m^{k-1}$. $E[X]=\sum_{|S|=k}E[X_S]\le {n\choose k}/m^{k-1}$. If need existence prob: $P[X\ge1]\le E[X]$.
 
 \subsectiontitle{Binary Search Trees}
 \textbf{Binary search (sorted array):}
@@ -499,26 +524,14 @@ fn binary_search(a: Vec<_>,x){
 //upper_bound = first > x: First position where the value is > x.
 \end{lstlisting}
 \textbf{BST property:}
-\[
-\forall y\in L(x): y.key < x.key,
-\qquad
-\forall y\in R(x): y.key \ge x.key.
-\]
+BST property: all keys in L(x) < x.key; all keys in R(x) >= x.key.
 
-\[
-\begin{array}{@{}ll@{}}
-\text{search/insert/delete} & O(h)\\
-\text{min/max/successor/predecessor} & O(h)\\
-\text{inorder traversal} & \Theta(n)\\
-\text{balanced tree} & h=\Theta(\log n)\\
-\text{degenerate tree} & h=\Theta(n)
-\end{array}
-\]
+BST ops search/insert/delete/min/max/succ/pred O(h); inorder Theta(n); balanced h=Theta(log n), degenerate h=Theta(n).
 
 % --- BST core operations + insert/transplant/delete: two minipages, no titles ---
 \noindent
 \begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 search(x,k):
   while x != NIL and x.key != k:
     if k < x.key: x = x.left
@@ -535,10 +548,6 @@ successor(x):
     x = y
     y = y.parent
   return y
-\end{lstlisting}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
 insert(T,z):
   y=NIL; x=T.root
   while x!=NIL:
@@ -549,6 +558,10 @@ insert(T,z):
   else if z.key<y.key: y.left=z
   else: y.right=z
 
+\end{lstlisting}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 transplant(T,u,v):
   if u.parent==NIL: T.root=v
   else if u==u.parent.left: u.parent.left=v
@@ -570,38 +583,17 @@ delete(T,z):
 \textbf{Delete cases:} no left, no right, or replace by successor. All $O(h)$.
 
 \textbf{Traversals:}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 inorder(x):  if x!=NIL: inorder(x.left); visit(x); inorder(x.right)
 preorder(x): if x!=NIL: visit(x); preorder(x.left); preorder(x.right)
 postorder(x):if x!=NIL: postorder(x.left); postorder(x.right); visit(x)
 \end{lstlisting}
 
-\[
-\text{inorder(BST)}=\text{sorted order}
-\]
+inorder(BST)=sorted order.
  \textbf{Augmented BST / rank queries:}
-Each node stores
-\[
-size(x)=1+size(x.left)+size(x.right).
-\]
-
-\[
-\begin{array}{@{}ll@{}}
-rank_{<}(x)  & = \#\{k:k<x\}\\
-rank_{\le}(x)& = \#\{k:k\le x\}
-\end{array}
-\]
-
-\[
-\begin{array}{@{}ll@{}}
-{[a,b]} & rank_{\le}(b)-rank_{<}(a)\\
-(a,b] & rank_{\le}(b)-rank_{\le}(a)\\
-{[a,b)} & rank_{<}(b)-rank_{<}(a)\\
-(a,b) & rank_{<}(b)-rank_{\le}(a)
-\end{array}
-\]
-
-Rank query follows one root-to-leaf path $\Rightarrow O(h)$.
+Store \texttt{size(x)=1+size(left)+size(right)}. Rank follows one root-to-leaf path, so $O(h)$.
+\texttt{rank\_<}(x)=\#keys $<x$, \texttt{rank\_<=}(x)=\#keys $\le x$.
+Intervals: $[a,b]=\texttt{rank\_<=}(b)-\texttt{rank\_<}(a)$; $(a,b]=\texttt{rank\_<=}(b)-\texttt{rank\_<=}(a)$; $[a,b)=\texttt{rank\_<}(b)-\texttt{rank\_<}(a)$; $(a,b)=\texttt{rank\_<}(b)-\texttt{rank\_<=}(a)$.
 
 
 
@@ -627,7 +619,7 @@ Best $\Theta(n)$, worst/avg $\Theta(n^2)$, space $O(1)$.
 Stable, simple version uses $\Theta(n)$ temp.\\
 \noindent
 \begin{minipage}[t]{0.38\linewidth}\vspace{0pt}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn merge_sort(a,l,r){
   if r-l <= 1 { return; }
   let m=(l+r)/2;
@@ -638,7 +630,7 @@ fn merge_sort(a,l,r){
 \end{lstlisting}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.60\linewidth}\vspace{0pt}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn merge(a,l,m,r){
   let (mut i,mut j)=(l,m); let mut t=Vec::new();
   while i<m && j<r {
@@ -657,7 +649,7 @@ $T(n)=2T(n/2)+\Theta(n)=\Theta(n\log n)$.
 In-place. Partition invariant: $A[l..i]\le p$, $A[i+1..j]>p$, unknown after $j$, pivot at $r$.
 \noindent
 \begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn partition(a,l,r)->usize{
   let p=a[r]; let mut i=l;
   for j in l..r {
@@ -668,7 +660,7 @@ fn partition(a,l,r)->usize{
 \end{lstlisting}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn quicksort(a,l,r){
   if l>=r { return; }
   let q=partition(a,l,r);
@@ -700,7 +692,7 @@ $\Theta(n+k)$ time/space. Stable with prefix sums. Needs bounded integer keys.
 Assume children subtrees are heaps; only $A[i]$ may violate. 0-index:
 \begin{lstlisting}
 fn max_heapify(a:&mut Vec<i32>, i:usize, heap_size:usize){
-  let (l,r)=(2*i+1,2*i+2); let mut largest=i;
+  let (l,r)=(2*i,2*i+1); let mut largest=i;
   if l<heap_size && a[l]>a[largest] { largest=l; }
   if r<heap_size && a[r]>a[largest] { largest=r; }
   if largest!=i { a.swap(i,largest); max_heapify(a,largest,heap_size); }
@@ -744,7 +736,25 @@ fn max_heap_insert(a:&mut Vec<i32>, key:i32){
 Std min-heap: `BinaryHeap<Reverse<(dist,node)>>`. Ops insert/extract/increase-key $O(\log n)$.
 
 \sectiontitle{Divide \& Conquer Algorithms}
+\subsectiontitle{Karatsuba Multiplication}
 
+\[
+x=x_hB^m+x_l,\qquad y=y_hB^m+y_l
+\]
+
+\[
+a=x_hy_h,\quad
+b=x_ly_l,\quad
+c=(x_h+x_l)(y_h+y_l)
+\]
+
+\[
+xy=aB^{2m}+(c-a-b)B^m+b
+\]
+
+3 recursive multiplications.
+
+3 recursive multiplications: $T(n)=3T(n/2)+\Theta(n)=\Theta(n^{\log_2 3})\approx\Theta(n^{1.585})$.
 \subsectiontitle{Maximum Sum Subarray}
 
 Problem:
@@ -763,7 +773,7 @@ best subarray is:
 
 \noindent
 \begin{minipage}[t]{0.32\linewidth}\vspace{0pt}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn max_crossing(a,l,m,r){
   // left suffix [l,m)
   left_sum=-INF;
@@ -775,7 +785,7 @@ fn max_crossing(a,l,m,r){
 \end{lstlisting}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.32\linewidth}\vspace{0pt}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
   // right prefix [m,r)
   right_sum=-INF;
   sum=0;
@@ -788,7 +798,7 @@ fn max_crossing(a,l,m,r){
 \end{lstlisting}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.32\linewidth}\vspace{0pt}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn max_subarray(a,l,r){
   if r-l==1 {return a[l]}
   m=(l+r)/2;
@@ -806,7 +816,7 @@ $T(n)=2T(n/2)+\Theta(n)=\Theta(n\log n)$
 
 Linear Kadane:
 
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 
 fn kadane(a: &Vec<i32>) -> i32 {
     let mut best: i32 = a[0];
@@ -832,7 +842,7 @@ Kadane invariant:
 
 Naive:
 
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 for i in 0..n {
     for j in 0..n {
         for k in 0..n {
@@ -844,33 +854,14 @@ for i in 0..n {
 
 Complexity:
 
-$\Theta(n^3), space \Theta(n^2)$
+$\Theta(n^3), \text{space} \Theta(n^2)$
 
-D\&C block formula ($8$ mults):
-\[
-\begin{array}{@{}ll@{}}
-C_{11}=A_{11}B_{11}+A_{12}B_{21} & C_{12}=A_{11}B_{12}+A_{12}B_{22}\\
-C_{21}=A_{21}B_{11}+A_{22}B_{21} & C_{22}=A_{21}B_{12}+A_{22}B_{22}
-\end{array}
-\]
-$T(n)=8T(n/2)+\Theta(n^2)=\Theta(n^3)$.
+ D\&C block formula (8 mults): \texttt{C11=A11B11+A12B21}, \texttt{C12=A11B12+A12B22}, \texttt{C21=A21B11+A22B21}, \texttt{C22=A21B12+A22B22}. Hence $T(n)=8T(n/2)+\Theta(n^2)=\Theta(n^3)$.
 
-\textbf{Strassen} ($7$ mults):
-\[
-\begin{array}{@{}ll@{}}
-M_1=(A_{11}+A_{22})(B_{11}+B_{22}) & M_2=(A_{21}+A_{22})B_{11}\\
-M_3=A_{11}(B_{12}-B_{22})          & M_4=A_{22}(B_{21}-B_{11})\\
-M_5=(A_{11}+A_{12})B_{22}          & M_6=(A_{21}-A_{11})(B_{11}+B_{12})\\
-M_7=(A_{12}-A_{22})(B_{21}+B_{22}) &
-\end{array}
-\]
-\[
-\begin{array}{@{}ll@{}}
-C_{11}=M_1+M_4-M_5+M_7 & C_{12}=M_3+M_5\\
-C_{21}=M_2+M_4         & C_{22}=M_1-M_2+M_3+M_6
-\end{array}
-\]
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+ \textbf{Strassen} (7 mults):
+\texttt{M1=(A11+A22)(B11+B22)}, \texttt{M2=(A21+A22)B11}, \texttt{M3=A11(B12-B22)}, \texttt{M4=A22(B21-B11)}, \texttt{M5=(A11+A12)B22}, \texttt{M6=(A21-A11)(B11+B12)}, \texttt{M7=(A12-A22)(B21+B22)}.
+\texttt{C11=M1+M4-M5+M7}, \texttt{C12=M3+M5}, \texttt{C21=M2+M4}, \texttt{C22=M1-M2+M3+M6}.
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn strassen(A,B,n){
   if n==1 { return A*B }
   split A,B into A11..A22,B11..B22;
@@ -884,29 +875,10 @@ fn strassen(A,B,n){
 $T(n)=7T(n/2)+\Theta(n^2)=\Theta(n^{\log_2 7})\approx\Theta(n^{2.807})$.
 
 \sectiontitle{Dynamic Programming}
-
-\subsectiontitle{DP Meta-template}
-State/base/transition/order/answer/runtime/reconstruct.
-\begin{lstlisting}[aboveskip=0.01cm,belowskip=0.01cm]
-dp[s] = opt over valid choices c:
-        F(s,c, dp[next(s,c)])
-\end{lstlisting}
-Always state: state/base/transition/order/answer/runtime/reconstruct.
-
-\begin{lstlisting}
-choice[s] = argopt choice used in dp[s]
-reconstruct:
-while state != terminal:
-    output choice[state]
-    state = next(state, choice[state])
-\end{lstlisting}
 \subsectiontitle{Rod Cutting}
 revenue$[\ell]=$ best revenue length $\ell$, $\text{first}[\ell]=$ first cut.
-\[
-\text{revenue}[0]=0,\qquad
-\text{revenue}[\ell]=\max_{1\le c\le \ell}\{\text{price}[c]+\text{revenue}[\ell-c]\}.
-\]
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+Rod cutting: revenue[0]=0; revenue[l]=max over 1<=c<=l of price[c]+revenue[l-c].
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn rod_cut(price:Vec<i32>, n:usize){
   revenue=vec![0;n+1]; first=vec![0;n+1];
   for length in 1..=n {revenue[length]=-INF;
@@ -924,11 +896,8 @@ Reconstruct: output `first[length]`, set `length-=first[length]`. Runtime $\Thet
 
 \subsectiontitle{Matrix Chain Multiplication}
 Matrix $i$: $p_i\times p_{i+1}$. $dp[i][j]=$ min cost for $A_i\cdots A_j$.
-\[
-dp[i][i]=0,\qquad
-dp[i][j]=\min_{i\le k<j}\{dp[i][k]+dp[k+1][j]+p_i p_{k+1}p_{j+1}\}.
-\]
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+MCM recurrence: dp[i][i]=0; dp[i][j]=min over i<=k<j of dp[i][k]+dp[k+1][j]+p[i]*p[k+1]*p[j+1].
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn matrix_chain(p:Vec<usize>){     // optimal parenthesization
   n=p.len()-1; dp=vec![vec![0;n];n]; split=vec![vec![0;n];n];
   for len in 2..=n {for i in 0..=n-len {
@@ -945,13 +914,8 @@ Increasing chain length. $\Theta(n^2)$ states $\times\Theta(n)$ splits $=\Theta(
 
 \subsectiontitle{Optimal BST}
 Sorted keys $K_i$ with successful probs $p_i$; optional unsuccessful $q_i$. $e[i][j]=$ min expected cost for subtree $i..j$, $w[i][j]=$ prob mass, $root[i][j]=$ best root.
-\[
-e[i][i-1]=0,\quad w[i][i-1]=q_{i-1},\quad
-\]
-\[
-e[i][j]=\min_{i\le r\le j}\{e[i][r-1]+e[r+1][j]+w[i][j]\}
-\]
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+OBST: e[i][i-1]=0, w[i][i-1]=q[i-1]; e[i][j]=min over root r in [i,j] of e[i][r-1]+e[r+1][j]+w[i][j].
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn optimal_bst(p,q,n){
   for i in 1..=n+1 {e[i][i-1]=0; w[i][i-1]=q[i-1]}
   for len in 1..=n {for i in 1..=n-len+1 {
@@ -968,17 +932,8 @@ Runtime $\Theta(n^3)$, space $\Theta(n^2)$.
 
 \subsectiontitle{Longest Common Subsequence}
 $dp[i][j]=$ LCS length of $A[0..i),B[0..j)$.
-\[
-dp[0][j]=dp[i][0]=0,\quad
-\]
-\[
-dp[i][j]=
-\begin{cases}
-1+dp[i-1][j-1] & A_{i-1}=B_{j-1},\\
-\max(dp[i-1][j],dp[i][j-1]) & A_{i-1}\ne B_{j-1}
-\end{cases}
-\]
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+LCS: dp[0][*]=dp[*][0]=0. If A[i-1]==B[j-1]: dp[i][j]=1+dp[i-1][j-1]; else max(up,left).
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn lcs(a:Vec<char>, b:Vec<char>){
   n=a.len(); m=b.len(); dp=vec![vec![0;m+1];n+1];
   for i in 1..=n {for j in 1..=m {
@@ -1001,10 +956,8 @@ $\Theta(nm)$ time, $\Theta(nm)$ or rolling $\Theta(m)$ space. Equal $\to$ diagon
 
 \subsectiontitle{Knapsack 0/1}
 $dp[i][c]=$ best value using first $i$ items, capacity $c$.
-\[
-dp[i][c]=\max\big(dp[i-1][c],\ v_{i-1}+dp[i-1][c-w_{i-1}]\big)\quad(w_{i-1}\le c).
-\]
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+0/1 knapsack: dp[i][c]=max(skip dp[i-1][c], take v[i-1]+dp[i-1][c-w[i-1]]) if w[i-1]<=c.
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn knapsack(w:Vec<usize>, v:Vec<i32>, cap:usize){ // choose item at most once
   n=w.len(); dp=vec![vec![0;cap+1];n+1];
   for i in 1..=n {for c in 0..=cap {
@@ -1020,11 +973,8 @@ fn knapsack(w:Vec<usize>, v:Vec<i32>, cap:usize){ // choose item at most once
 $\Theta(nW)$ pseudo-polynomial.
 
 \subsectiontitle{Coin Change / Change-Making}
-\[
-mincoins[0]=0,\qquad
-mincoins[x]=\min_{coin\le x}\{1+mincoins[x-coin]\}.
-\]
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+Coin change: mincoins[0]=0; mincoins[x]=min over coin<=x of 1+mincoins[x-coin].
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn coin_change(coins:Vec<usize>, target:usize){ // unlimited coins
   mincoins=vec![INF;target+1]; mincoins[0]=0;   // min number of coins
   for amount in 1..=target {for coin in coins {
@@ -1039,10 +989,8 @@ Runtime $\Theta(target\cdot \#coins)$.
 
 \subsectiontitle{Longest Increasing Subsequence}
 Quadratic:
-\[
-dp[i]=1+\max\{dp[j]:j<i\land a_j<a_i\},\qquad \text{answer}=\max_i dp[i].
-\]
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+LIS $O(n^2)$: $dp[i]=1+\max\{dp[j]:j<i, a[j]<a[i]\}$; answer=$\max dp$.
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn lis_n2(a:Vec<i32>){
   dp=vec![1;a.len()];
   for i in 0..a.len(){for j in 0..i{
@@ -1063,7 +1011,7 @@ fn lis_nlogn(a:Vec<i32>){ // tails[len-1] = min tail
 
 \subsectiontitle{DAG Longest Path}
 Input `adj: WGraph`. Topological order; max-relaxation; negative weights OK because no cycles.
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn dag_longest(adj:WGraph, source:usize){
   n=adj.len(); dist=vec![-INF;n]; parent=vec![None;n]; dist[source]=0;
   for u in topo(adj) {if dist[u]!=-INF {for (v,w) in adj[u] {
@@ -1075,7 +1023,7 @@ fn dag_longest(adj:WGraph, source:usize){
 Runtime $\Theta(V+E)$.
 \sectiontitle{Graph Representation / Types}
 Use these names everywhere:
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 type Graph  = Vec<Vec<usize>>;        // adj[u] = neighbors v
 type WGraph = Vec<Vec<(usize,i32)>>;  // adj[u] = (v,weight)
 struct Edge { u:usize, v:usize, w:i32 }
@@ -1092,8 +1040,8 @@ edge list & space $\Theta(E)$ & Bellman-Ford/Kruskal scans all edges
 Input `adj: Graph`. Unweighted shortest paths / levels / components / bipartite. Runtime $\Theta(V+E)$.
 
 \noindent
-\begin{minipage}[t]{0.30\linewidth}\vspace{0pt}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn bfs(adj:Graph, source:usize){  
   n=adj.len(); // shortest path in unweighted graph                    
   dist=vec![INF;n]; // levels, components
@@ -1115,8 +1063,8 @@ fn bfs(adj:Graph, source:usize){
 }
 \end{lstlisting}
 \end{minipage}\hfill
-\begin{minipage}[t]{0.30\linewidth}\vspace{0pt}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn bipartite(adj:Graph){          // 2-coloring
   n=adj.len(); color=vec![-1;n];  // false iff odd cycle
   queue=VecDeque::new();
@@ -1136,10 +1084,6 @@ fn bipartite(adj:Graph){          // 2-coloring
   true
 }
 \end{lstlisting}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.30\linewidth}\vspace{0pt}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
-\end{lstlisting}
 \end{minipage}
 
 \textbf{Invariant:} queue processed in nondecreasing distance. First discovery gives shortest unweighted distance. If a shorter path to $v$ existed, its predecessor would have been processed earlier, so $v$ would already be discovered.
@@ -1149,7 +1093,7 @@ fn bipartite(adj:Graph){          // 2-coloring
 \textbf{Path reconstruction:} follow parent$[t]$ backward until source, then reverse.
 \sectiontitle{DFS / Topological Sort / SCC}
 Input `adj: Graph`. Colors: WHITE/GRAY/BLACK. Runtime $\Theta(V+E)$.
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn dfs(adj:Graph){  // topo, cycle detection, SCC
   n=adj.len(); color=vec![WHITE;n]; parent=vec![None;n]; time=0;
   fn visit(u:usize){
@@ -1163,20 +1107,14 @@ fn dfs(adj:Graph){  // topo, cycle detection, SCC
 }
 \end{lstlisting}
 Directed edges: tree = white target; back = gray ancestor; forward/cross = black. Undirected: only tree/back; cycle test = visited neighbor $\ne$ parent.
-\[
-\begin{array}{@{}lll@{}}
-d[u]<d[v]<f[v]<f[u] & \text{tree/forward} & v\text{ descendant of }u\\
-d[v]<d[u]<f[u]<f[v] & \text{back} & v\text{ ancestor, cycle in directed}\\
-f[v]<d[u]\text{ or }f[u]<d[v] & \text{cross} & \text{disjoint subtrees}
-\end{array}
-\]
+DFS times: d[u]<d[v]<f[v]<f[u] => descendant/tree/forward; d[v]<d[u]<f[u]<f[v] => back to ancestor/cycle; disjoint intervals => cross.
 Directed cycle detection: edge to GRAY vertex $\Leftrightarrow$ back edge $\Leftrightarrow$ directed cycle. Edge to BLACK does not prove a cycle.
 % --- Topological Sort: two minipages, left = topo_dfs, right = topo_kahn ---
 \subsectiontitle{Topological Sort}
 DAG order: every edge $u\to v$ has $u$ before $v$. DFS = decreasing finish times.
 \noindent
 \begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn topo_dfs(adj:Graph){
   n=adj.len(); seen=vec![false;n]; order=vec![];
   fn visit(u:usize){
@@ -1190,7 +1128,7 @@ fn topo_dfs(adj:Graph){
 \end{lstlisting}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn topo_kahn(adj:Graph){
   n=adj.len(); indeg=vec![0;n]; 
   queue=VecDeque::new(); order=vec![];
@@ -1214,7 +1152,7 @@ Kahn returns `None` iff not all vertices are output.
 SCC: $u\leftrightsquigarrow v$. Kosaraju = DFS finish order, reverse graph, DFS in decreasing finish order.
 \noindent
 \begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn kosaraju(adj:Graph){   // SCC. DFS order -> reverse graph -> DFS
   order=dfs_finish_order(adj); rev=reverse_graph(adj);
   seen=vec![false;n]; comps=[];
@@ -1223,7 +1161,7 @@ fn kosaraju(adj:Graph){   // SCC. DFS order -> reverse graph -> DFS
 \end{lstlisting}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
     comp=[]; stack=[source]; seen[source]=true;
     while let Some(u)=stack.pop(){
       comp.push(u);
@@ -1245,7 +1183,7 @@ Forest of trees. parent$[x]$ points upward. Root is representative. rank$[x]$ up
 
 \noindent
 \begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 struct DSU {
   parent: Vec<usize>,
   rank: Vec<usize>,
@@ -1263,7 +1201,7 @@ impl DSU{
 \end{lstlisting}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
   fn union(&mut self,x,y){
     let (mut rx,mut ry)=(self.find(x),self.find(y));
     if rx==ry {return false}
@@ -1290,7 +1228,7 @@ $\alpha(n)\le 5$ in practice.
 
 \noindent
 \begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 //Connected components:
 let mut dsu: DSU = DSU::new(n);
 for (u, v) in edges {
@@ -1302,7 +1240,7 @@ if dsu.find(a) == dsu.find(b) {
 \end{lstlisting}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 //Cycle detection (undirected):
 let mut dsu: DSU = DSU::new(n);
 for (u, v) in edges {
@@ -1337,7 +1275,7 @@ Cut $(S,V-S)$: edge crosses cut iff one endpoint in $S$, one outside. Light edge
 
 Data structures:
 
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 
 struct Edge {
     u,
@@ -1354,7 +1292,7 @@ let mut total: i32 = 0;
 
 Algorithm:
 
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn kruskal(n,edges: Vec<Edge>){ // MST
   sort_by_weight(edges); dsu=DSU::new(n); total=0; mst=[];
   for e in edges {              // sort edges + DSU
@@ -1385,7 +1323,7 @@ Traps:
 
 \subsectiontitle{Prim}
 
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 let mut adj: Vec<Vec<(usize, i32)>> = vec![Vec::new(); n];
 let mut used: Vec<bool> = vec![false; n];
 let mut heap: BinaryHeap<Reverse<(i32, usize, usize)>> = BinaryHeap::new();
@@ -1393,7 +1331,7 @@ let mut heap: BinaryHeap<Reverse<(i32, usize, usize)>> = BinaryHeap::new();
 
 \end{lstlisting}
 
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn prim(adj,s){                         // MST
   heap.push((0,s)); total=0; cnt=0;     // min crossing edge
   while let Some((w,u))=heap.pop_min(){
@@ -1415,6 +1353,11 @@ Complexity:
 \end{itemize}
  \textbf{Output condition:} if `cnt==n`, `total` is MST weight; otherwise graph disconnected.
 
+\subsectiontitle{MST Reduction Stencils}
+\textbf{Roads+airports:} add supernode $s$; edge $s$--city cost=airport; old road edges unchanged; MST in augmented graph.
+\textbf{Add one new vertex given old MST $T$:} run MST on $T$ plus new incident edges; old non-tree edges still unnecessary by cut/cycle property.
+\textbf{Points/routes:} complete graph on points, edge cost=squared distance; run Kruskal/Prim. $E=\Theta(n^2)$, time $O(n^2\log n)$.
+
 \sectiontitle{Shortest Paths}
 \subsectiontitle{Chooser}
 
@@ -1425,15 +1368,10 @@ weights $\ge 0$ & Dijkstra \\
 negative edges & Bellman-Ford
 \end{tabular}
 \subsectiontitle{Relaxation}
-For edge $(u,v,w)$:
-\[
-\text{dist}[u]\ne \text{INF}\land \text{dist}[v]>\text{dist}[u]+w
-\Rightarrow
-\text{dist}[v]=\text{dist}[u]+w,\quad \text{parent}[v]=u.
-\]
+Relax edge (u,v,w): if dist[u]!=INF and dist[v] > dist[u]+w, set dist[v]=dist[u]+w and parent[v]=u.
 
 \subsectiontitle{Dijkstra}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn dijkstra(adj:WGraph, source:usize){ // all weights >= 0
   let n=adj.len();
   let mut dist=vec![INF;n];
@@ -1461,7 +1399,7 @@ Runtime $O((V+E)\log V)$. Requires all weights $\ge0$; negative edges break it.
 % --- Bellman-Ford: two minipages, left = init+V-1 passes, right = negative-cycle check+return ---
 \subsectiontitle{Bellman-Ford}
 Input `edges: EdgeList`. Negative edges OK; detects reachable negative cycles.
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn bellman_ford(n, edges, source){
   dist=vec![INF;n]; parent=vec![None;n]; dist[source]=0;
   for _ in 0..n-1 { changed=false;
@@ -1485,11 +1423,13 @@ Runtime $\Theta(VE)$. Returns `None` iff a reachable negative cycle is detected.
 \textbf{Negative cycle not reachable from source:}
 Bellman-Ford still returns shortest paths.
 Only improvements after pass V reachable from source matter.
+
+\textbf{Weight transform trap:} $w'(e)=a\,w(e)$ with $a>0$ preserves shortest paths. $w'(e)=w(e)+a$ does not preserve shortest paths when candidate paths use different numbers of edges.
 % --- DAG shortest path: two minipages, left = init+for u in topo, right = relaxation body+return ---
 \subsectiontitle{Shortest Paths in DAG}
 \noindent
 \begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn dag_shortest(adj:WGraph, source:usize){
   let n=adj.len();                          
   let mut dist=vec![INF;n];                 
@@ -1502,7 +1442,7 @@ fn dag_shortest(adj:WGraph, source:usize){
 \end{lstlisting}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
     for (v,w) in adj[u] {    // topological order.
       if dist[v]>dist[u]+w { // one relaxation per edge
         dist[v]=dist[u]+w;   // negative weights ok
@@ -1516,29 +1456,22 @@ fn dag_shortest(adj:WGraph, source:usize){
 \end{minipage}
 Runtime $\Theta(V+E)$.
 
+\subsectiontitle{Time-Dependent / Ferry Shortest Path}
+$dist[u]=$ earliest arrival. Road relax: $dist[v]=\min(dist[v],dist[u]+w)$.
+Ferry/event $(u,v,dep,arr)$ usable iff $dist[u]\le dep$, then relax $dist[v]=\min(dist[v],arr)$.
+Use PQ by earliest arrival if time is FIFO/nonnegative; otherwise expand state/event graph.
+
 \sectiontitle{Flow Networks}
 Directed $G=(V,E)$, source $s$, sink $t$, capacities $c(u,v)\ge0$.
-\[
-0\le f(u,v)\le c(u,v),
-\qquad
-\forall u\ne s,t:
-\sum_v f(v,u)=\sum_v f(u,v),
-\qquad
-\]
-\[|f|=\sum_v f(s,v)-\sum_v f(v,s).\]
+Flow constraints: 0<=f(u,v)<=c(u,v); conservation for u!=s,t: inflow=outflow; |f|=out(s)-in(s).
 Augmenting path: $s\to t$ path in residual graph; bottleneck $=\min c_f(e)$ on path.
- \textbf{Flow reduction recipe:}
-1. What is being selected?
-2. Capacity enforcing usage limit.
-3. Source/sink edges enforce constraints.
-4. Flow value = objective.
-5. Integral capacities => integral solution.
+\textbf{Flow reduction recipe:} selected object = unit flow; capacities = usage limits; source/sink = constraints; value = objective; integral caps => integral solution.
 % --- Ford-Fulkerson: two minipages, left = add_edge+bfs_path, right = max_flow ---
 \subsectiontitle{Ford-Fulkerson / Edmonds-Karp}
 Types: `cap[u][v]` residual capacity matrix; `adj: Graph` stores forward+reverse residual neighbors.
 \noindent
 \begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn add_edge(u:usize,v:usize,c:i32){
   adj[u].push(v); adj[v].push(u); cap[u][v]+=c
 }
@@ -1560,7 +1493,7 @@ fn bfs_path(source:usize, sink:usize){
 \end{lstlisting}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 fn max_flow(source:usize, sink:usize){ // max flow
   flow=0;               // augment while path exists
   loop {
@@ -1581,13 +1514,13 @@ fn max_flow(source:usize, sink:usize){ // max flow
 Ford-Fulkerson integer caps: $O(E|f^*|)$. Edmonds-Karp BFS: $O(VE^2)$. Final residual graph gives min cut by residual reachability from $s$.
 
 \subsectiontitle{Max-Flow Min-Cut / Reductions}
-\[
-\max |f|=\min_{s\in S,t\notin S}c(S,V\setminus S).
-\]
+Max-flow min-cut: $\max |f|=\min c(S,V\setminus S)$, $s\in S,t\notin S$.
 Optimality certificate: flow value $F$ and cut capacity $F$.
 
 Bipartite matching: source$\to L$ cap 1; $L\to R$ cap 1 for original edges; $R\to$sink cap 1. Flow-1 $L\to R$ edges are matched pairs.
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+
+Capacitated assignment: $s\to$ person cap 1; person$\to$ acceptable activity cap 1; activity$\to t$ cap capacity. Feasible iff maxflow = \#people. Integral capacities give integral assignment.
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 source=0; left0=1; right0=1+n_left; sink=1+n_left+n_right;
 for l in 0..n_left {add_edge(source,left0+l,1)}
 for (l,r) in bip_edges {add_edge(left0+l,right0+r,1)}
@@ -1595,44 +1528,32 @@ for r in 0..n_right {add_edge(right0+r,sink,1)}
 // flow-1 edge left0+l -> right0+r = matched pair
 \end{lstlisting}
 Edge-disjoint paths: all edges cap 1. Vertex-disjoint: split $v$ into $v_{\text{in}}\to v_{\text{out}}$ cap 1; original $u\to v$ becomes $u_{\text{out}}\to v_{\text{in}}$ cap INF.
+\textbf{Grid domino:} checkerboard cells $L/R$, edge for adjacency, max dominoes = max bipartite matching.
+\textbf{Path $x\to y$ through $z$:} need two internally vertex-disjoint paths $z\leadsto x$ and $z\leadsto y$; split vertices cap 1, add $x,y\to t$ cap 1, ask maxflow $z\to t$ value 2.
+\textbf{Special edge $e=ab$ used:} try orientations $\cdots a-b\cdots$ and $\cdots b-a\cdots$; remove $e$, enforce disjoint prefix/suffix with unit capacities.
 
 \sectiontitle{Randomized / Probabilistic Analysis}
-Indicator: $X_A=\mathbf 1[A]$, $\mathbb E[X_A]=\Pr(A)$. Linearity:
-\[
-\mathbb E\!\left[\sum_iX_i\right]=\sum_i\mathbb E[X_i]
-\]
+Indicator: $X_A=\mathbf 1[A]$, $\mathbb E[X_A]=\Pr(A)$. Linearity: $E[\sum_i X_i]=\sum_i E[X_i]$.
 No independence needed.
 
-\textbf{Hiring:}
-\[
-\Pr(X_i=1)=1/i
-\Rightarrow
-\mathbb E[\#\text{hires}]=\sum_{i=1}^n1/i=H_n=\Theta(\log n).
-\]
-\textbf{Hat-check:}
-\[
-\Pr(X_i=1)=1/n
-\Rightarrow
-\mathbb E[\#\text{fixed}]=\sum_{i=1}^n1/n=1.
-\]
+Hiring: $P(i\text{ new best})=1/i$, so $E[\#hires]=\sum_i1/i=H_n=\Theta(\log n)$. Hat-check: $P(i\text{ own hat})=1/n$, so $E[\#fixed]=1$.
 
 Randomized quicksort: random pivot avoids input-dependent bad order; expected $\Theta(n\log n)$, worst still $\Theta(n^2)$.
 
 \textbf{Birthday:} $\Pr[\text{all different among }q\text{ into }m]=\prod_{i=0}^{q-1}(1-i/m)\approx e^{-q(q-1)/(2m)}$; for 365 days, $q=23$ gives match prob $>1/2$.
 Integral bound for decreasing positive $f$: $\sum_{k=a+1}^{b}f(k)\le\int_a^b f(x)\,dx$.
-
 \sectiontitle{Online Algorithms / Competitive Analysis / Experts}
-Online: decide before future known. Competitive ratio:
-\[
-\text{ALG}(I)\le r\,\text{OPT}(I)+c.
-\]
-Ski rental: rent 1/day, buy $B$, unknown $T$. $\text{OPT}(T)=\min(T,B)$. Rent until cost $B$, then buy. Ratio $2$.
+Online: decide before future known.
+Competitive ratio: $ALG(I)\le r\,OPT(I)+c$.
+\textbf{Ski rental:} rent 1/day, buy B. Rent until paid B, then buy. If $T\le B$: ALG=T=OPT. If $T>B$: ALG<=B+B=2B=2OPT. Lower bound: adversary stops just before/after purchase; deterministic CR=2.
+\subsectiontitle{Caching MC traps}
+LRU evicts least-recently requested page. LFU evicts smallest request count; tie usually LRU. Neither has pointwise fewer misses than the other on every sequence. LRU is $k$-competitive for cache size $k$; no deterministic paging algorithm beats $k$ in worst-case competitive ratio.
 
 \subsectiontitle{Experts / Weighted Majority}
 $n$ experts, rounds $t=1..T$. Expert $i$ predicts; loss $\ell_{i,t}\in\{0,1\}$.
 Weights $w_i=1$ initially. Let $W=\sum_iw_i$.
 
-\begin{lstlisting}[aboveskip=0.02cm,belowskip=0.02cm]
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
 for t in 1..=T {
   predict weighted majority of experts;
   observe true outcome;
@@ -1642,7 +1563,7 @@ for t in 1..=T {
 }
 \end{lstlisting}
 
-Weighted prediction: choose label with larger total weight.\
+Weighted prediction: choose label with larger total weight.
 Potential: $W_t=\sum_i w_i^{(t)}$.
 If ALG makes mistake, wrong-weight $\ge W_t/2$, so
 $W_{t+1}\le W_t/2\cdot\beta+W_t/2=W_t(1+\beta)/2$.
@@ -1650,7 +1571,130 @@ If best expert has $m^*$ mistakes, its weight is $\beta^{m^*}$, hence
 $\beta^{m^*}\le W_T\le n\big((1+\beta)/2\big)^M$.
 For $\beta=1/2$: $M\le 2.41(m^*+\log_2 n)$.
 General randomized Hedge: choose expert with prob $w_i/W$; update $w_i\leftarrow w_i e^{-\eta \ell_{i,t}}$; regret $O(\sqrt{T\log n})$.
-Secretary: random order; skip first $n/e$, take next candidate better than all seen; success probability $\sim1/e$. Prophet: online threshold vs prophet seeing all values.
+\subsectiontitle{Prophet Inequality}
+Independent nonnegative $X_i$, known distributions. $M=\max_iX_i$, $z=E[M]$, threshold $\tau=z/2$. Accept first $X_i\ge\tau$. Guarantee $E[ALG]\ge z/2$. Proof stencil: $q=P[\forall i:X_i<\tau]$, $b_i=E[(X_i-\tau)^+]$. Value from threshold part $\ge\tau(1-q)$; overshoot part $\ge q\sum_i b_i$; combine to get $\ge z/2$.
+
+Secretary: random order; observe first $n/e$ candidates, remember best rank seen, then hire first later candidate better than all observed.
+\[
+P(\text{success})\approx 1/e
+\]
+
+\sectiontitle{WORKED EXAM PROBLEMS}
+{\color{rustMacro}\itshape Representative problems from exercise sets / exams. Question $\to$ exact answer skeleton.}\par\vspace{0.006cm}
+
+\workedq{Q1 (Ex1)}{Prove Linear-Search correct with a loop invariant.}{
+\inv at start of iteration $i$, $A[j]\ne v$ for all $j<i$. \init $i=1$: empty range. \maint if invariant true and $A[i]\ne v$, then $A[j]\ne v$ for all $j<i+1$. \term either returns $i$ with $A[i]=v$, or $i=n+1$ so $A[j]\ne v$ for all $j$ and returns NIL.
+}
+
+\workedq{Q2 (Ex1)}{Show $(n+a)^b=\Theta(n^b)$ for constants $a,b>0$.}{
+For $n\ge2|a|$: $\frac12n\le n+a\le2n$, hence $(\frac12)^bn^b\le(n+a)^b\le2^bn^b$. Both sides are constants times $n^b$; therefore $(n+a)^b=\Theta(n^b)$.
+}
+
+\workedq{Q3 (Ex2)}{Solve $T(n)=8T(n/2)+\Theta(n^2)$ by recursion tree.}{
+Level $i$: $8^i$ nodes, each cost $c(n/2^i)^2$, total $cn^2 2^i$. Sum $\sum_{i=0}^{\lg n}cn^2 2^i=\Theta(n^2\cdot n)=\Theta(n^3)$. Leaves: $n^{\lg8}=n^3$. Hence $T(n)=\Theta(n^3)$.
+}
+
+\workedq{Q4 (Ex2)}{Recursive insertion sort recurrence.}{
+$T(n)=T(n-1)+\Theta(n)$. Unroll: $T(n)=c\sum_{i=1}^n i=c\,n(n+1)/2=\Theta(n^2)$.
+}
+
+\workedq{Q5 (Ex6)}{$n$ restaurants on a line, positions $M_i$, profit $p_i$, any two at distance $\ge k$. Max profit.}{
+Sort by position. State $dp[i]=$ best profit using restaurants $i..n$. Let $next(i)=$ first $j>i$ with $M_j\ge M_i+k$. Base $dp[n+1]=0$. Recurrence $dp[i]=\max(dp[i+1],p_i+dp[next(i)])$. Order $i=n..1$. \ans $dp[1]$. Runtime $O(n\log n)$ with binary search, $O(n^2)$ if scanning. Correctness: optimum either skips $i$ or takes $i$; after taking $i$, remaining choices start at $next(i)$.
+}
+
+\workedq{Q5b (Ex6)}{Restaurant leftmost-open variant.}{
+Sort positions. $c[i]=$ best total profit if $i$ is leftmost opened. Then $c[i]=p_i+\max\{c[j]:j>i\land M_j\ge M_i+k\}$. \ans $\max_i c[i]$. Bottom-up $O(n^2)$; with binary search/suffix maxima $O(n\log n)$. Fixing the leftmost open restaurant leaves an independent feasible suffix.
+}
+
+\workedq{Q6 (Ex5)}{$O(\log n)$ test whether sorted $A[1..n]$ contains $k$.}{
+Binary search. Invariant: if $k$ occurs, then $k\in A[l..r)$. Compare $k$ with $A[mid]$ and keep only the half that can contain $k$. Sortedness preserves invariant. Termination: range empty $\Rightarrow$ absent, or equality found. Runtime $T(n)=T(n/2)+O(1)=O(\log n)$.
+}
+
+\workedq{Q7 (Ex9)}{Maximum bipartite matching as a flow.}{
+Build network: add $s\to L$, original edges $L\to R$, $R\to t$, all capacities 1. Integral max-flow gives integral solution. Capacity 1 forces each left/right vertex used at most once. Unit-flow edge $l\to r$ is a matched pair; every matching gives same-size flow. Thus max flow = max matching.
+}
+
+
+\workedq{Q9 (Ex12)}{What does Lomuto Partition return on an all-equal array, and how to fix it?}{
+With condition $\le pivot$, every element is moved left, so $q=r$. Split sizes $n-1$ and 0, hence $T(n)=T(n-1)+\Theta(n)=\Theta(n^2)$. Fix: 3-way partition into $<,=,>$ pivot, or split equal keys evenly / return middle of equal block.
+}
+
+\workedq{Q10 (L19 exam)}{Ski resort: lifts/slopes have signed altitude changes. Verify every closed tour returns to start with net change 0.}{
+Build digraph: stations = vertices, lift/slope = directed edge weighted by altitude change. Bad tour $\Leftrightarrow$ directed cycle with nonzero total weight. Run Bellman-Ford from super-source on weights $w$ and on $-w$: a positive cycle in $w$ is negative in $-w$; a negative cycle in $w$ is detected in $w$. Relaxation on pass $V$ in either run $\Rightarrow$ nonzero cycle exists. Runtime $O(VE)$.
+}
+
+\workedq{Q11 (L19)}{(a) Min crossing edge of any cut is in the MST. (b) Max edge of any cycle is not.}{
+Assume distinct weights. (a) Cut property: if lightest crossing edge $e$ absent, add $e$ to MST; cycle contains another crossing edge $f$ with $w(f)>w(e)$; swap $f\mapsto e$ gives cheaper tree, contradiction. (b) If heaviest cycle edge $e$ in MST, remove it; the cycle has lighter edge $f$ crossing the induced cut; swap $e\mapsto f$ gives cheaper tree, contradiction.
+}
+
+\workedq{Q12}{Travel passes DP.}{
+Travel days $d_1<\cdots<d_n$, pass lengths $L\in\{1,7,30\}$, costs $c_L$. State $dp[i]=$ min cost to cover $d_i..d_n$. Base $dp[n+1]=0$. Let $next(i,L)=$ first $j$ with $d_j\ge d_i+L$. Recurrence $dp[i]=\min_{L\in\{1,7,30\}}(c_L+dp[next(i,L)])$. Order $i=n..1$. \ans $dp[1]$. Runtime $O(n\log n)$ with lower\_bound. Trap: pass covers days $<d_i+L$, not $\le d_i+L$.
+}
+
+\workedq{Q13}{Weighted interval scheduling.}{
+Sort intervals by finish time. $p(i)=$ last interval finishing $\le start_i$. State $dp[i]=$ best weight using first $i$ intervals. Base $dp[0]=0$. Recurrence $dp[i]=\max(dp[i-1],w_i+dp[p(i)])$. \ans $dp[n]$. Runtime $O(n\log n)$ with binary search for $p(i)$. Correctness: optimum either excludes interval $i$ or includes it, then previous chosen interval must be $\le p(i)$.
+}
+
+\workedq{Q14}{Interval scheduling greedy.}{
+Sort by increasing finish time. Take interval if $start\ge last\_finish$. Proof: let $e$ be earliest finishing interval. For any optimum $O$, replace the first interval of $O$ by $e$; finish time does not increase, so all later intervals remain feasible. Therefore some optimum contains $e$. Induct on remaining intervals.
+}
+
+\workedq{Q15}{DP design answer skeleton.}{
+State $dp[s]=$ optimum value for subproblem $s$. Base: smallest/empty cases. Recurrence $dp[s]=\operatorname{opt}_{c\in valid(s)}F(s,c,dp[next(s,c)])$. Order: dependencies first. \ans explicitly write returned state. Runtime = \#states $\times$ transition cost. Correctness: induction in fill order; recurrence enumerates all valid choices; dependencies optimal by IH.
+}
+
+\workedq{Q16a}{Parametric search / split array into $k$ contiguous parts minimizing max load.}{
+Bounds $L=\max_i a_i$, $R=\sum_i a_i$. feasible$(M)$: scan left-to-right, start new part when current sum $+a_i>M$. Count parts. If count $\le k$, $M$ feasible. Binary search smallest feasible $M$. Correctness: greedy uses minimum possible number of parts for fixed $M$; feasibility monotone. Runtime $O(n\log(\sum a_i))$.
+}
+
+\workedq{Q16b}{Forbidden mutual reachability pairs in directed graph.}{
+Compute SCCs in $O(V+E)$. For each forbidden pair $(u,v)$, reject iff $comp[u]=comp[v]$. If same SCC, then $u\leadsto v$ and $v\leadsto u$. If mutually reachable, they must be in same SCC. Thus all constraints checked exactly.
+}
+
+\workedq{Q16c}{Capacitated activity assignment.}{
+Network: $s\to$ each student cap 1; student$\to$ acceptable activity cap 1; activity$\to t$ cap number of spots. Run maxflow. 
+\ans feasible iff flow value = \#students. Correctness: integral unit leaving each student chooses one acceptable activity; activity capacity enforces spots; any assignment gives same flow.
+}
+
+\workedq{Q16d}{Binary tree diameter / longest path.}{
+Postorder. Empty height $=-1$. For node $u$: $h(u)=1+\max(h_L,h_R)$ and $diam(u)=\max(diam_L,diam_R,h_L+h_R+2)$. 
+\ans $diam(root)$. Correctness: every longest path either stays inside one child subtree or crosses through $u$ using deepest node on each side.
+}
+
+\workedq{Q16e}{Connected graph with $n$ vertices and $n$ edges: count spanning trees.}{
+Such graph has exactly one cycle. Find the cycle by DFS back edge or by repeatedly deleting degree-1 leaves. If cycle length is $c$, answer is $c$. Reason: a spanning tree has $n-1$ edges, so delete one edge. Deleting a cycle edge keeps connected and removes the only cycle; deleting a non-cycle edge disconnects.
+}
+
+\workedq{Q16f}{Coin-row 2-player minimax DP.}{
+$dp[i][j]=$ max value current player can guarantee from coins $i..j$. Base $dp[i][i]=a_i$. Recurrence $dp[i][j]=\max(a_i+\min(dp[i+2][j],dp[i+1][j-1]),\ a_j+\min(dp[i+1][j-1],dp[i][j-2]))$. Opponent chooses the branch minimizing our future gain. Fill by interval length.
+}
+
+\workedq{Q17}{Competitive-ratio template.}{
+Define OPT$(I)$. Compute ALG$(I)$. Split into exhaustive cases. In each case prove ALG$(I)\le r\,OPT(I)+c$. Take worst case. Conclusion: algorithm is $r$-competitive. Lower bound: adversary chooses future after seeing deterministic algorithm action.
+}
+
+\workedq{Q18}{Secretary problem.}{
+Random order. Reject first $\lfloor n/e\rfloor$ candidates, remember best seen, then hire first later candidate better than all previous. Success probability tends to $1/e$. Reason: best candidate must appear after sample, and best candidate before it must lie inside sample.
+}
+
+\workedq{Q19}{Online bipartite matching.}{
+Left side known, right vertices arrive online. Greedy: match arriving vertex to any free neighbor. Each greedy edge can be charged by at most two OPT edges, so ALG $\ge\frac12$OPT. Ranking: random rank/permutation on left vertices; match arriving vertex to lowest-ranked free neighbor. Expected $(1-1/e)$OPT.
+}
+\workedq{Q20}{Prophet inequality threshold algorithm.}{
+Known independent values $X_i$. Let $M=\max_iX_i$, $z=E[M]$, threshold $\tau=z/2$. Accept first value at least $\tau$. Guarantee $E[ALG]\ge z/2$. Write proof with $q=P[\text{no value reaches }\tau]$ and overshoots $(X_i-\tau)^+$; threshold contribution plus overshoot contribution gives half of prophet value.
+}
+
+\workedq{Q21}{Inorder+postorder tree reconstruction.}{
+root=last(postorder). Split inorder at root into left/right. Sizes determine postorder left/right blocks. Recurse. Correctness by induction on subtree size. Runtime $O(n)$ with key$\to$inorder-index map.
+}
+
+\workedq{Q22}{Longest path passing through root.}{
+Compute subtree heights. Answer $h(left)+h(right)+2$ with empty height $-1$. Correct because path through root must be deepest node in left side + root + deepest node in right side.
+}
+
+\workedq{Q23}{Domino/grid matching.}{
+Checkerboard color cells. Put black cells in $L$, white cells in $R$, edge iff adjacent. A domino is one matched edge; no cell reused because matching. Max domino placement = max bipartite matching.
+}
 
 \end{multicols*}
 
