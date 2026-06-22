@@ -523,24 +523,78 @@ $p<k$ & root/work wins & $\Theta(n^k)$\\
 use $cn^p - d n^q$.
 \textbf{Akra--Bazzi mini:} $T(n)=\alpha T(an)+\beta T(bn)+\Theta(n^d)$. Find $p$: $\alpha a^p+\beta b^p=1$. Then $p>d\Rightarrow\Theta(n^p)$, $p=d\Rightarrow\Theta(n^d\log n)$, $p<d\Rightarrow\Theta(n^d)$.
 \textbf{Recurrences / runtimes:}
-\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
-BinSearch: T(n/2)+1 -> log n
-Merge/MaxSub: 2T(n/2)+n -> n log n
-Naive MM: 8T(n/2)+n^2 -> n^3
-Strassen: 7T(n/2)+n^2 -> n^log2(7)
-Heapify: T(2n/3)+1 -> log n
-QSort(w): T(n-1)+n -> n^2
-QSort(b): 2T(n/2)+n -> n log n
-BF: (V-1)E relax -> VE
-BFS/DFS: V+E
+\par\noindent
 
-T(n/2)+1->log n    T(n/2)+n->n
-2T(n/2)+1->n       2T(n/2)+n->n log n
-3T(n/2)+n->n^log2(3)
-7T(n/2)+n^2->Strassen
-8T(n/2)+n^2->n^3
-T(n-1)+n->n^2
+\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
+Common algorithms:
+BinSearch       T(n/2)+1        -> Theta(log n)
+MergeSort       2T(n/2)+n       -> Theta(n log n)
+MaxSub D&C      2T(n/2)+n       -> Theta(n log n)
+Karatsuba       3T(n/2)+n       -> Theta(n^log2(3))
+Naive MM        8T(n/2)+n^2     -> Theta(n^3)
+Strassen        7T(n/2)+n^2     -> Theta(n^log2(7))
 \end{lstlisting}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.40\linewidth}\vspace{0pt}
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
+Master flashcards:
+T(n/2)+1        -> Theta(log n)
+T(n/2)+n        -> Theta(n)
+2T(n/2)+1       -> Theta(n)
+2T(n/2)+n       -> Theta(n log n)
+2T(n/2)+n log n -> Theta(n log^2 n)
+2T(n/2)+n^2     -> Theta(n^2)
+\end{lstlisting}
+\end{minipage}
+
+\begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
+Heapify         T(2n/3)+1       -> O(log n)
+BuildHeap       sum_h n*h/2^h   -> Theta(n)
+QSort worst     T(n-1)+n        -> Theta(n^2)
+QSort balanced  2T(n/2)+n       -> Theta(n log n)
+QSort random    pair indicators -> E[Theta(n log n)]
+
+Graph runtimes:
+BFS/DFS         visit V, scan E -> Theta(V+E)
+Topo/SCC        DFS passes      -> Theta(V+E)
+DAG SP/LP       topo + relax E  -> Theta(V+E)
+Dijkstra heap   heap relax      -> O(E log V)
+Bellman-Ford    (V-1)E relax    -> Theta(VE)
+Kruskal         sort E + DSU    -> O(E log E)
+Prim heap       PQ crossing     -> O(E log V)
+Ford-Fulkerson  augment paths   -> O(E|f*|)
+Edmonds-Karp    BFS residual    -> O(VE^2)
+\end{lstlisting}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.40\linewidth}\vspace{0pt}
+\begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
+3T(n/2)+n       -> Theta(n^log2(3))
+4T(n/2)+n       -> Theta(n^2)
+4T(n/2)+n^2     -> Theta(n^2 log n)
+7T(n/2)+n^2     -> Theta(n^log2(7))
+8T(n/2)+n^2     -> Theta(n^3)
+T(n-1)+1        -> Theta(n)
+T(n-1)+n        -> Theta(n^2)
+T(n-1)+n^2      -> Theta(n^3)
+
+Mental solver:
+T(n)=aT(n/b)+n^k, d=log_b(a)
+k<d -> Theta(n^d)
+k=d -> Theta(n^d log n)
+k>d -> Theta(n^k) if regular
+
+Non-equal splits:
+T=sum_i a_i*T(b_i*n)+Theta(n^k)
+find p with sum_i a_i*b_i^p = 1
+p>k -> Theta(n^p)
+p=k -> Theta(n^p log n)
+p<k -> Theta(n^k)
+Trap: if equality no slack, 
+      prove c*n^p-d*n^q.
+\end{lstlisting}
+\end{minipage}
 
 \sectiontitle{Basic Data Structures}
 \subsectiontitle{Stack / Queue / Linked List}
@@ -769,7 +823,7 @@ fn max_heapify(a:&mut Vec<i32>, i:usize, heap_size:usize){
   if largest!=i { a.swap(i,largest); max_heapify(a,largest,heap_size); }
 }
 \end{lstlisting}
-$O(height(i))\le O(\log n)$. Trap: during heapsort, \texttt{heap\_size} $\ne$ \texttt{a.len()}.
+O(height(i))<= O(log n). Trap: during heapsort, \texttt{heap\_size} ≠ \texttt{a.len()}.
 \subsectiontitle{Build Max Heap}
 \begin{lstlisting}
 fn build_max_heap(a:&mut Vec<i32>){
@@ -1296,7 +1350,9 @@ impl DSU{
 \end{lstlisting}
 \end{minipage}
 
-Complexities: LL weighted union O(m + n log n), forest + union by rank + path compression O(m alpha(n)). alpha(n)<= 5 in practice\\
+Complexities: LL weighted union O(m + n log n), forest + union by rank + path 
+
+compression O(m alpha(n)). alpha(n)<= 5 in practice\\
 \noindent
 \begin{minipage}[t]{0.49\linewidth}\vspace{0pt}
 \begin{lstlisting}[aboveskip=0pt,belowskip=0pt]
@@ -1537,9 +1593,15 @@ fn dag_shortest(adj:WGraph, source:usize){
 \end{minipage}
 
 \subsectiontitle{Time-Dependent / Ferry Shortest Path}
-$dist[u]=$ earliest arrival. Road relax: $dist[v]=\min(dist[v],dist[u]+w)$.
-Ferry/event $(u,v,dep,arr)$ usable iff $dist[u]\le dep$, then relax $dist[v]=\min(dist[v],arr)$.
-Use PQ by earliest arrival if time is FIFO/nonnegative; otherwise expand state/event graph.
+Earliest arrival:
+dist[v]=min(dist[v],dist[u]+w).
+Ferry/event (u,v,dep,arr):
+usable iff dist[u]<=dep
+dist[v]=min(dist[v],arr).
+FIFO/nonneg times:
+run Dijkstra/PQ on arrival time.
+Otherwise:
+expand state/event graph
 
 \sectiontitle{Flow Networks}
 Directed $G=(V,E)$, source $s$, sink $t$, capacities $c(u,v)\ge0$.
@@ -1594,8 +1656,9 @@ fn max_flow(source:usize, sink:usize){
 Ford-Fulkerson integer caps: $O(E|f^*|)$. Edmonds-Karp BFS: $O(VE^2)$. Final residual graph gives min cut by residual reachability from $s$.
 
 \subsectiontitle{Max-Flow Min-Cut / Reductions}
-Max-flow min-cut: $\max |f|=\min c(S,V\setminus S)$, $s\in S,t\notin S$.
-Optimality certificate: flow value $F$ and cut capacity $F$.
+Max-flow min-cut: max|f| = min c(S,V-S), s\in S, t\notin S.
+
+Optimality certificate: flow value F and cut capacity F.
 
 Bipartite matching: source$\to L$ cap 1; $L\to R$ cap 1 for original edges; $R\to$sink cap 1. Flow-1 $L\to R$ edges are matched pairs.
 
@@ -1654,10 +1717,7 @@ General randomized Hedge: choose expert with prob $w_i/W$; update $w_i\leftarrow
 \subsectiontitle{Prophet Inequality}
 Independent nonnegative $X_i$, known distributions. $M=\max_iX_i$, $z=E[M]$, threshold $\tau=z/2$. Accept first $X_i\ge\tau$. Guarantee $E[ALG]\ge z/2$. Proof stencil: $q=P[\forall i:X_i<\tau]$, $b_i=E[(X_i-\tau)^+]$. Value from threshold part $\ge\tau(1-q)$; overshoot part $\ge q\sum_i b_i$; combine to get $\ge z/2$.
 
-Secretary: random order; observe first $n/e$ candidates, remember best rank seen, then hire first later candidate better than all observed.
-\[
-P(\text{success})\approx 1/e
-\]
+Secretary: random order; observe first $n/e$ candidates, remember best rank seen, then hire first later candidate better than all observed. P(success) \approx 1/e
 
 
 \sectiontitle{WORKED EXAM PROBLEMS}
